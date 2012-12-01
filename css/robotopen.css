@@ -1,0 +1,12 @@
+/* robotopen ds css */
+
+body { 
+    padding-top: 40px; 
+}
+
+#console {
+	background-color:#ffffff;
+	height:350px;
+	overflow:auto;
+	padding:5px;
+}

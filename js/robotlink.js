@@ -1,41 +1,152 @@
-/**
- * robotlink.js - robotopen ds websocket link
- */
+function robotlink (ip, port) {
+	// setup ip address and port
+	if (ip == null) {
+    	this.ip = "10.0.0.22";
+  	} else {
+  		this.ip = ip;
+  	}
+  	if (port == null) {
+    	this.port = "8000";
+  	} else {
+  		this.port = port;
+  	}
 
-var wsUri = "ws://10.0.0.22:8000";
-var output;  
-function init() { 
-	output = document.getElementById("output");
-	testWebSocket();
+  	// the websocket connection to the robot
+  	this.websocket = null;
+  	// is the robot currently enabled?
+  	this.enabled = false;
+  	// storage for the interval timer to send data to the robot
+  	this.tx_timer = null;
+  	// is the websocket connection to the robot active?
+	this.is_connected = false;
+	// debug to console
+	this.debugging = true;
+	// keep track of the packets sent and received this session
+	this.rx_count = 0;
+	this.tx_count = 0;
 }
-function testWebSocket() { 
-	websocket = new WebSocket(wsUri, "ro1");
-	websocket.binaryType = "arraybuffer";
-	websocket.onopen = function(evt) { 
-		onOpen(evt) 
-	}; 
-	websocket.onclose = function(evt) { 
-		onClose(evt) 
-	}; 
-	websocket.onmessage = function(evt) { 
-		onMessage(evt) 
-	}; 
-	websocket.onerror = function(evt) { 
-		onError(evt) 
-	}; 
-}  
-	
-function onOpen(evt) { 
-	writeToScreen("CONNECTED"); 
-	
-	var int = self.setInterval(function(){doSend("h")},100);
-}  
-function onClose(evt) { 
-	writeToScreen("DISCONNECTED"); 
-}  
-function onMessage(evt) { 
-	if (evt.data instanceof ArrayBuffer) {
-		var bytearray = new Uint8Array(evt.data);
+
+robotlink.prototype.debug = function(msg) {
+	// if debugging is enabled, push messages to the console
+	if(this.debugging == true) {
+		console.log("[RobotLink] " + msg);
+	}
+}
+
+robotlink.prototype.enable = function() {
+	// enable the robot
+	this.enabled = true;
+}
+
+robotlink.prototype.disable = function() {
+	// disable the robot
+	this.enabled = false;
+}
+
+robotlink.prototype.connect = function() {
+    try {
+    	// setup the websocket connection with the defined IP and port - must use subprotocol ro1 to connect
+		this.websocket = new WebSocket("ws://" + this.ip + ":" + port, "ro1");
+		// make sure any binary data we receive from the robot is in arraybuffer format
+		this.websocket.binaryType = "arraybuffer";
+
+		// glue to connect websocket to robotlink
+		this.websocket.robotlink = this;
+
+		// bindings between websocket events and robotlink functions
+		this.websocket.onopen = function() {
+		    this.robotlink.socket_on_open();
+		};
+		
+		this.websocket.onclose = function() {
+		    this.robotlink.socket_on_close();
+		};
+
+		this.websocket.onmessage = function(frame) {
+		    this.robotlink.socket_on_message(frame);
+		};
+
+		this.websocket.onerror = function(error) {
+		    this.robotlink.socket_on_error(error);
+		};
+
+		return true;
+	} catch(exception) {
+		this.debug("Could not create websocket.");
+		return false;
+	}
+};
+
+robotlink.prototype.robot_tx = function() {
+	// when the robot is disabled we must sent heartbeat frames to keep the connection alive
+	if (!this.enabled)
+		this.xmit("h");
+	else // otherwise send joystick data
+		this.send_joysticks();
+}
+
+robotlink.prototype.send_joysticks = function() {
+	// send joystick data here
+
+	/*
+		var packetSize = 16;
+		var bytearray = new Uint8Array(packetSize);
+
+	    for (var i=0;i<packetSize;++i) {
+	        bytearray[i] = canvaspixelarray[i];
+	    }
+
+    	this.xmit(bytearray.buffer);
+	*/
+}
+
+robotlink.prototype.xmit = function(frame) {
+    try {
+    	// increment tx count
+    	this.tx_count++;
+
+    	// transmit the frame or message to the robot
+		this.websocket.send(frame);
+
+		return true;
+	} catch(exception) {
+		this.debug("Transmit failure.");
+		return false;
+	}
+};
+
+robotlink.prototype.socket_on_open = function() {
+	this.is_connected = true;
+	this.debug("Websocket opened.");
+
+	// setup the timer to keep data supplied to the robot
+	this.tx_timer = setInterval(robotlink.robot_tx, 40);
+}
+
+robotlink.prototype.socket_on_close = function() {
+	this.websocket = null;
+	this.disable();
+	this.is_connected = false;
+	this.debug("Websocket closed.");
+	this.rx_count = 0;
+	this.tx_count = 0;
+
+	if (this.tx_timer != null) {
+		clearInterval(this.tx_timer);
+		this.tx_timer = null;
+	}
+
+	this.debug("Attempting reconnect...");
+	setTimeout(function(){
+		robotlink.connect();
+	}, 1000);
+}
+
+robotlink.prototype.socket_on_message = function(frame) {
+	this.rx_count++;
+
+	if (frame.data instanceof ArrayBuffer) {
+		var bytearray = new Uint8Array(frame.data);
 
 		var myString = "";
 
@@ -43,35 +154,30 @@ function onMessage(evt) {
 			myString += bytearray[i].toString() + "::";
 		}
 
-		writeToScreen('<span style="color: blue;">GOT ARRAY BUFFER FRAME ' + myString + '</span>');
+		this.debug("GOT ARRAY BUFFER FRAME " + myString);
 	}
 	else {
-		writeToScreen('<span style="color: blue;">GOT TEXT FRAME: ' + evt.data+'</span>');
+		this.debug("GOT TEXT FRAME: " + frame.data);
 	}
-	//websocket.close();
-}  
-function onError(evt) { 
-	writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data); 
-}  
-function doSend(message) { 
-	writeToScreen("SENT: " + message); 
+}
 
-	/*
-		var bytearray = new Uint8Array(canvaspixellen);
+robotlink.prototype.socket_on_error = function(error) {
+	this.debug("Websocket Error! " + error);
+	this.disable();
+}
 
-	    for (var i=0;i<canvaspixellen;++i) {
-	        bytearray[i] = canvaspixelarray[i];
-	    }
+robotlink.prototype.disconnect = function() {
+	this.websocket.close();
+	this.disable();
+	this.websocket = null;
+	this.is_connected = false;
 
-    	websocket.send(bytearray.buffer);
-	*/
+	if (this.tx_timer != null) {
+		clearInterval(this.tx_timer);
+		this.tx_timer = null;
+	}
 
-	websocket.send(message); 
-}  
-function writeToScreen(message) { 
-	var pre = document.createElement("p"); 
-	pre.style.wordWrap = "break-word"; 
-	pre.innerHTML = message; output.appendChild(pre); 
-}  
-
-window.addEventListener("load", init, false);
+	this.debug("Websocket closed.");
+	this.rx_count = 0;
+	this.tx_count = 0;
+}
