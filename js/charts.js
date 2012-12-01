@@ -27,9 +27,6 @@ new Highcharts.Chart({
      * NOTE: Highcharts is FREE for non-commercial projects only,
      * and requires the credits ("Highcharts.com" in the corner).
      *
-     * If you've purchased a license, you can remove the credit by
-     * adding `enabled: false` to `credits`.
-     *
      */
     credits: {
         style: {
@@ -112,20 +109,11 @@ new Highcharts.Chart({
     series: [ {
         pointStart: Date.UTC(2012,11,3),
         pointInterval: 24 * 3600 * 1000, // 1 day
-        name: 'Purchases',
+        name: 'Latency (ms)',
         marker: {
             symbol: 'circle'
         },
         // Just some random data. Replace this with your own.
         data: [4, 5, 8, 9, 10, 11, 10, 8, 7, 6, 9, 10, 13, 15, 16, 18, 15, 12, 10, 9, 8, 5, 8, 9, 10, 13, 15, 14]
-    },{
-        pointStart: Date.UTC(2012,11,3),
-        pointInterval: 24 * 3600 * 1000, // 1 day
-        name: 'Redemptions',
-        marker: {
-            symbol: 'circle'
-        },
-        // Just some random data. Replace this with your own.
-        data: [0, 2, 3, 4, 5, 3, 2, 2, 3, 4, 6, 7, 8, 9, 10, 8, 11, 7, 5, 3, 4, 4, 1, 3, 4, 5, 8, 10]
     }]
 });
