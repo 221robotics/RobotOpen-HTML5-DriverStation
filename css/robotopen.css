@@ -21,3 +21,9 @@ body {
 #content {
 	height: 700px;
 }
+
+#feedback-section {
+	height: 290px;
+	overflow-x:hidden;
+	overflow-y:auto;
+}

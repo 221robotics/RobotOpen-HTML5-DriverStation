@@ -1,18 +1,13 @@
-function robotlink (ip, port) {
+function robotlink (ip) {
 	// setup ip address and port
 	if (ip == null) {
     	this.ip = "10.0.0.22";
   	} else {
   		this.ip = ip;
   	}
-  	if (port == null) {
-    	this.port = "8000";
-  	} else {
-  		this.port = port;
-  	}
 
-  	// the websocket connection to the robot
-  	this.websocket = null;
+  	// the UDP socket connection to the robot
+  	this.socket = null;
   	// is the robot currently enabled?
   	this.enabled = false;
   	// storage for the interval timer to send data to the robot
@@ -47,36 +42,25 @@ robotlink.prototype.disable = function() {
 
 robotlink.prototype.connect = function() {
     try {
-    	// setup the websocket connection with the defined IP and port - must use subprotocol ro1 to connect
-		this.websocket = new WebSocket("ws://" + this.ip + ":" + this.port, "ro1");
-		// make sure any binary data we receive from the robot is in arraybuffer format
-		this.websocket.binaryType = "arraybuffer";
+    	this.socket = new chromeNetworking.clients.udp.roClient();
 
-		// glue to connect websocket to robotlink
-		this.websocket.robotlink = this;
-
-		var t = this;
-
-		// bindings between websocket events and robotlink functions
-		this.websocket.onopen = function() {
-		    this.robotlink.socket_on_open(t);
-		};
+    	// pass the robotlink instance to the socket object
+    	var t = this;
 		
-		this.websocket.onclose = function() {
-		    this.robotlink.socket_on_close(t);
-		};
+		this.socket.connect(this.ip,
+			function() {
+		    	t.socket_on_open(t);
+			}
+		);
 
-		this.websocket.onmessage = function(frame) {
-		    this.robotlink.socket_on_message(t, frame);
-		};
-
-		this.websocket.onerror = function(error) {
-		    this.robotlink.socket_on_error(t, error);
-		};
+		this.socket.receive(function(frame) {
+		    t.socket_on_message(t, frame);
+		});
 
 		return true;
+
 	} catch(exception) {
-		this.debug("Could not create websocket.");
+		this.debug("Could not create socket.");
 		return false;
 	}
 };
@@ -84,10 +68,17 @@ robotlink.prototype.connect = function() {
 robotlink.prototype.robot_tx = function() {
 	if (this.is_connected) {
 		// when the robot is disabled we must sent heartbeat frames to keep the connection alive
-		if (!this.enabled)
-			this.xmit("h");
-		else // otherwise send joystick data
+		if (!this.enabled) {
+			var buf = new ArrayBuffer(3); // 2 bytes for each char
+		    var bufView = new Uint8Array(buf);
+		    bufView[0] = 104; // h
+		    bufView[1] = 238; // 0xEE
+		    bufView[2] = 1;   // 0x01
+			this.xmit(buf);
+		}
+		else { // otherwise send joystick data
 			this.send_joysticks();
+		}
 	}
 }
 
@@ -106,7 +97,7 @@ robotlink.prototype.send_joysticks = function() {
 	*/
 
 	// TEMPORARY
-	this.xmit("h");
+	// this.xmit("h");
 }
 
 robotlink.prototype.xmit = function(frame) {
@@ -115,9 +106,18 @@ robotlink.prototype.xmit = function(frame) {
     	this.tx_count++;
 
     	// transmit the frame or message to the robot
-		this.websocket.send(frame);
+		this.socket.send(frame);
 
-		this.debug("TX: " + frame);
+		var bytearray = new Uint8Array(frame);
+
+    	var myString = "";
+
+	    for (var i = 0; i < bytearray.length-1; i++) {
+			myString += bytearray[i].toString() + "::";
+		}
+		myString += bytearray[bytearray.length-1].toString();
+
+		this.debug("TX: " + myString);
 
 		return true;
 	} catch(exception) {
@@ -128,29 +128,11 @@ robotlink.prototype.xmit = function(frame) {
 
 robotlink.prototype.socket_on_open = function(link) {
 	link.is_connected = true;
-	link.debug("Websocket opened.");
+	link.debug("Socket opened.");
 
 	// setup the timer to keep data supplied to the robot
 	function callTx() { link.robot_tx(); }
 	link.tx_timer = setInterval(callTx, link.xmit_rate);
-}
-
-robotlink.prototype.socket_on_close = function(link) {
-	link.websocket = null;
-	link.disable();
-	link.is_connected = false;
-	link.debug("Websocket closed.");
-	link.rx_count = 0;
-	link.tx_count = 0;
-
-	if (link.tx_timer != null) {
-		clearInterval(link.tx_timer);
-		link.tx_timer = null;
-	}
-
-	link.debug("Attempting reconnect...");
-	function callReconnect() { link.connect(); }
-	setTimeout(callReconnect, 1000);
 }
 
 robotlink.prototype.socket_on_message = function(link, frame) {
@@ -161,26 +143,19 @@ robotlink.prototype.socket_on_message = function(link, frame) {
 
 		var myString = "";
 
-		for (var i = 0; i < bytearray.length; i++) {
+		for (var i = 0; i < bytearray.length-1; i++) {
 			myString += bytearray[i].toString() + "::";
 		}
+		myString += bytearray[bytearray.length-1].toString();
 
-		link.debug("GOT ARRAY BUFFER FRAME " + myString);
+		link.debug("RX: " + myString);
 	}
-	else {
-		link.debug("GOT TEXT FRAME: " + frame.data);
-	}
-}
-
-robotlink.prototype.socket_on_error = function(link, error) {
-	link.debug("Websocket Error! " + error);
-	link.disable();
 }
 
 robotlink.prototype.disconnect = function() {
-	this.websocket.close();
+	this.socket.disconnect();
 	this.disable();
-	this.websocket = null;
+	this.socket = null;
 	this.is_connected = false;
 
 	if (this.tx_timer != null) {
@@ -188,14 +163,12 @@ robotlink.prototype.disconnect = function() {
 		this.tx_timer = null;
 	}
 
-	this.debug("Websocket closed.");
+	this.debug("Socket closed.");
 	this.rx_count = 0;
 	this.tx_count = 0;
 }
 
-
-
 document.addEventListener('DOMContentLoaded', function () {
-  var rolink = new robotlink();
-  //rolink.connect();
+  	var rolink = new robotlink();
+  	rolink.connect();
 });
