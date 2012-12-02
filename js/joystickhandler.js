@@ -19,18 +19,16 @@
 
 var joystickHandler = {
 
-  // How “deep” does an analogue button need to be depressed to consider it
-  // a button down.
-  ANALOG_BUTTON_THRESHOLD: .5,
-
   numJoysticks: 0,
+
+  callbacks: [],
 
   init: function() {
     joystickHandler.updateGamepads();
   },
 
   // print debug statements to console
-  debugging: true,
+  debugging: false,
 
   /**
    * Tell the user the browser doesn’t support Gamepad API.
@@ -43,6 +41,10 @@ var joystickHandler = {
   debug: function(msg) {
     if (this.debugging)
       console.log("[JoystickHandler] " + msg);
+  },
+
+  subscribe: function(callback) {
+    this.callbacks.push(callback);
   },
 
   /**
@@ -67,6 +69,9 @@ var joystickHandler = {
           padsConnected = true;
         }
       }
+      for (var i=0;i<this.callbacks.length;i++) { 
+        this.callbacks[i](-1, 'num-gamepads', gamepads.length);
+      }
     }
     else {
       joystickHandler.numJoysticks = 0;
@@ -74,6 +79,9 @@ var joystickHandler = {
 
     if (!padsConnected) {
       $("#no-gamepads-connected").show();
+      for (var i=0;i<this.callbacks.length;i++) { 
+        this.callbacks[i](-1, 'num-gamepads', 0);
+      }
     }
   },
 
@@ -82,58 +90,8 @@ var joystickHandler = {
    */
   updateButton: function(value, gamepadId, id) {
 
-    // value >= ANALOG_BUTTON_THRESHOLD
-
-    if (id == 'button-1') {
-      this.debug("joy " + gamepadId + ", button 1 " + value);
-    }
-    else if (id == 'button-2') {
-      this.debug("joy " + gamepadId + ", button 2 " + value);
-    }
-    else if (id == 'button-3') {
-      this.debug("joy " + gamepadId + ", button 3 " + value);
-    }
-    else if (id == 'button-4') {
-      this.debug("joy " + gamepadId + ", button 4 " + value);
-    }
-    else if (id == 'button-left-shoulder-top') {
-      this.debug("joy " + gamepadId + ", button-left-shoulder-top " + value);
-    }
-    else if (id == 'button-left-shoulder-bottom') {
-      this.debug("joy " + gamepadId + ", button-left-shoulder-bottom " + value);
-    }
-    else if (id == 'button-right-shoulder-top') {
-      this.debug("joy " + gamepadId + ", button-right-shoulder-top " + value);
-    }
-    else if (id == 'button-right-shoulder-bottom') {
-      this.debug("joy " + gamepadId + ", button-right-shoulder-bottom " + value);
-    }
-    else if (id == 'button-select') {
-      this.debug("joy " + gamepadId + ", button-select " + value);
-    }
-    else if (id == 'button-start') {
-      this.debug("joy " + gamepadId + ", button-start " + value);
-    }
-    else if (id == 'stick-1') {
-      this.debug("joy " + gamepadId + ", stick-1 " + value);
-    }
-    else if (id == 'stick-2') {
-      this.debug("joy " + gamepadId + ", stick-2 " + value);
-    }
-    else if (id == 'button-dpad-top') {
-      this.debug("joy " + gamepadId + ", button-dpad-top " + value);
-    }
-    else if (id == 'button-dpad-bottom') {
-      this.debug("joy " + gamepadId + ", button-dpad-bottom " + value);
-    }
-    else if (id == 'button-dpad-left') {
-      this.debug("joy " + gamepadId + ", button-dpad-left " + value);
-    }
-    else if (id == 'button-dpad-right') {
-      this.debug("joy " + gamepadId + ", button-dpad-right " + value);
-    }
-    else if (id.indexOf('extra-button') != -1) {
-      this.debug("joy " + gamepadId + ", extra-button " + value);
+    for (var i=0;i<this.callbacks.length;i++) { 
+      this.callbacks[i](gamepadId, id, Math.floor(value*255));
     }
 
   },
@@ -143,28 +101,22 @@ var joystickHandler = {
    */
   updateAxis: function(value, gamepadId, labelId, stickId, horizontal) {
 
-    // value is from -1 to 1
-    if (labelId == 'stick-1-axis-x') {
-      this.debug("joy " + gamepadId + ", stick-1-axis-x update " + value);
+    if (gamepadId.indexOf('axis-y') != -1)
+      value *= -1;
+
+    var adjustedVal;
+
+    if (value > .05)
+      adjustedVal = Math.floor((value*127) + 127);
+    else if (value < -.05)
+      adjustedVal = Math.floor(127 - (value*127*-1));
+    else
+      adjustedVal = 127;
+
+    for (var i=0;i<this.callbacks.length;i++) { 
+      this.callbacks[i](gamepadId, labelId, adjustedVal);
     }
-    else if (labelId == 'stick-1-axis-y') {
-      this.debug("joy " + gamepadId + ", stick-1-axis-y update " + value);
-    }
-    else if (labelId == 'stick-2-axis-x') {
-      this.debug("joy " + gamepadId + ", stick-2-axis-x update " + value);
-    }
-    else if (labelId == 'stick-2-axis-y') {
-      this.debug("joy " + gamepadId + ", stick-2-axis-y update " + value);
-    }
-    else if (labelId.indexOf('extra-axis') != -1) {
-      this.debug("joy " + gamepadId + ", extra-axis update " + value);
-    }
+
   }
 
 };
-
-
-document.addEventListener('DOMContentLoaded', function () {
-  joystickHandler.init();
-  gamepadSupport.init();
-});
