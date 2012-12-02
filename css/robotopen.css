@@ -1,12 +1,23 @@
 /* robotopen ds css */
 
 body { 
-    padding-top: 40px; 
+    padding-top: 40px;
+    overflow-x:hidden;
+    overflow-y:auto;
 }
 
 #console {
 	background-color:#ffffff;
-	height:350px;
+	height:615px;
 	overflow:auto;
 	padding:5px;
+	border:1px solid #dddddd;
+}
+
+#main-area {
+	height: 700px;
+}
+
+#content {
+	height: 700px;
 }

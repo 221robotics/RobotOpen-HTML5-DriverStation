@@ -24,6 +24,8 @@ function robotlink (ip, port) {
 	// keep track of the packets sent and received this session
 	this.rx_count = 0;
 	this.tx_count = 0;
+	// data xmit rate (ms)
+	this.xmit_rate = 100;
 }
 
 robotlink.prototype.debug = function(msg) {
@@ -46,28 +48,30 @@ robotlink.prototype.disable = function() {
 robotlink.prototype.connect = function() {
     try {
     	// setup the websocket connection with the defined IP and port - must use subprotocol ro1 to connect
-		this.websocket = new WebSocket("ws://" + this.ip + ":" + port, "ro1");
+		this.websocket = new WebSocket("ws://" + this.ip + ":" + this.port, "ro1");
 		// make sure any binary data we receive from the robot is in arraybuffer format
 		this.websocket.binaryType = "arraybuffer";
 
 		// glue to connect websocket to robotlink
 		this.websocket.robotlink = this;
 
+		var t = this;
+
 		// bindings between websocket events and robotlink functions
 		this.websocket.onopen = function() {
-		    this.robotlink.socket_on_open();
+		    this.robotlink.socket_on_open(t);
 		};
 		
 		this.websocket.onclose = function() {
-		    this.robotlink.socket_on_close();
+		    this.robotlink.socket_on_close(t);
 		};
 
 		this.websocket.onmessage = function(frame) {
-		    this.robotlink.socket_on_message(frame);
+		    this.robotlink.socket_on_message(t, frame);
 		};
 
 		this.websocket.onerror = function(error) {
-		    this.robotlink.socket_on_error(error);
+		    this.robotlink.socket_on_error(t, error);
 		};
 
 		return true;
@@ -78,11 +82,13 @@ robotlink.prototype.connect = function() {
 };
 
 robotlink.prototype.robot_tx = function() {
-	// when the robot is disabled we must sent heartbeat frames to keep the connection alive
-	if (!this.enabled)
-		this.xmit("h");
-	else // otherwise send joystick data
-		this.send_joysticks();
+	if (this.is_connected) {
+		// when the robot is disabled we must sent heartbeat frames to keep the connection alive
+		if (!this.enabled)
+			this.xmit("h");
+		else // otherwise send joystick data
+			this.send_joysticks();
+	}
 }
 
 robotlink.prototype.send_joysticks = function() {
@@ -98,6 +104,9 @@ robotlink.prototype.send_joysticks = function() {
 
     	this.xmit(bytearray.buffer);
 	*/
+
+	// TEMPORARY
+	this.xmit("h");
 }
 
 robotlink.prototype.xmit = function(frame) {
@@ -108,6 +117,8 @@ robotlink.prototype.xmit = function(frame) {
     	// transmit the frame or message to the robot
 		this.websocket.send(frame);
 
+		this.debug("TX: " + frame);
+
 		return true;
 	} catch(exception) {
 		this.debug("Transmit failure.");
@@ -115,35 +126,35 @@ robotlink.prototype.xmit = function(frame) {
 	}
 };
 
-robotlink.prototype.socket_on_open = function() {
-	this.is_connected = true;
-	this.debug("Websocket opened.");
+robotlink.prototype.socket_on_open = function(link) {
+	link.is_connected = true;
+	link.debug("Websocket opened.");
 
 	// setup the timer to keep data supplied to the robot
-	this.tx_timer = setInterval(robotlink.robot_tx, 40);
+	function callTx() { link.robot_tx(); }
+	link.tx_timer = setInterval(callTx, link.xmit_rate);
 }
 
-robotlink.prototype.socket_on_close = function() {
-	this.websocket = null;
-	this.disable();
-	this.is_connected = false;
-	this.debug("Websocket closed.");
-	this.rx_count = 0;
-	this.tx_count = 0;
+robotlink.prototype.socket_on_close = function(link) {
+	link.websocket = null;
+	link.disable();
+	link.is_connected = false;
+	link.debug("Websocket closed.");
+	link.rx_count = 0;
+	link.tx_count = 0;
 
-	if (this.tx_timer != null) {
-		clearInterval(this.tx_timer);
-		this.tx_timer = null;
+	if (link.tx_timer != null) {
+		clearInterval(link.tx_timer);
+		link.tx_timer = null;
 	}
 
-	this.debug("Attempting reconnect...");
-	setTimeout(function(){
-		robotlink.connect();
-	}, 1000);
+	link.debug("Attempting reconnect...");
+	function callReconnect() { link.connect(); }
+	setTimeout(callReconnect, 1000);
 }
 
-robotlink.prototype.socket_on_message = function(frame) {
-	this.rx_count++;
+robotlink.prototype.socket_on_message = function(link, frame) {
+	link.rx_count++;
 
 	if (frame.data instanceof ArrayBuffer) {
 		var bytearray = new Uint8Array(frame.data);
@@ -154,16 +165,16 @@ robotlink.prototype.socket_on_message = function(frame) {
 			myString += bytearray[i].toString() + "::";
 		}
 
-		this.debug("GOT ARRAY BUFFER FRAME " + myString);
+		link.debug("GOT ARRAY BUFFER FRAME " + myString);
 	}
 	else {
-		this.debug("GOT TEXT FRAME: " + frame.data);
+		link.debug("GOT TEXT FRAME: " + frame.data);
 	}
 }
 
-robotlink.prototype.socket_on_error = function(error) {
-	this.debug("Websocket Error! " + error);
-	this.disable();
+robotlink.prototype.socket_on_error = function(link, error) {
+	link.debug("Websocket Error! " + error);
+	link.disable();
 }
 
 robotlink.prototype.disconnect = function() {
@@ -181,3 +192,10 @@ robotlink.prototype.disconnect = function() {
 	this.rx_count = 0;
 	this.tx_count = 0;
 }
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  var rolink = new robotlink();
+  //rolink.connect();
+});

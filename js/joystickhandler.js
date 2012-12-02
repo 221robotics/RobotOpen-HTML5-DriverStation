@@ -30,13 +30,14 @@ var joystickHandler = {
   },
 
   // print debug statements to console
-  debugging: false,
+  debugging: true,
 
   /**
    * Tell the user the browser doesn’t support Gamepad API.
    */
   showNotSupported: function() {
     // gamepad API is not supported
+    $("#no-gamepad-support").show();
   },
 
   debug: function(msg) {
@@ -71,8 +72,8 @@ var joystickHandler = {
       joystickHandler.numJoysticks = 0;
     }
 
-    if (padsConnected) {
-      // do stuff if there are gamepads connected
+    if (!padsConnected) {
+      $("#no-gamepads-connected").show();
     }
   },
 
@@ -161,3 +162,9 @@ var joystickHandler = {
   }
 
 };
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  joystickHandler.init();
+  gamepadSupport.init();
+});

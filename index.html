@@ -24,7 +24,7 @@
         <span class="icon-bar"></span>
       </a>
 
-      <a class="brand" href="index.html">RobotOpenDS</a>
+      <div class="brand">RobotOpenDS</div>
       
       <div class="pull-right">
         <button class="btn btn-large btn-info disabled" type="button">Enable Robot</button>
@@ -36,16 +36,19 @@
 </div>
 
 <div class="container">
-    <div class="row-fluid">
+    <div class="row-fluid" id="main-area">
         <div class="span3">
             <aside>
                 <nav>
                     <ul class="nav">
                       <li class="selected" id="control-link">
-                        <a href=""><i class="icon-play"></i> Control</a>
+                        <a href="#"><i class="icon-play"></i> Control</a>
+                      </li>
+                      <li id="console-link">
+                        <a href="#"><i class="icon-warning-sign icon-white"></i> Console</a>
                       </li>
                       <li id="setup-link">
-                        <a href="javascript:showSetup();"><i class="icon-wrench icon-white"></i> Setup</a>
+                        <a href="#"><i class="icon-wrench icon-white"></i> Setup</a>
                       </li>
                     </ul>
                 </nav>
@@ -101,19 +104,6 @@
                   </div>
                 </section>
 
-                <!-- Console
-                ================================================== -->
-                <section id="console-section">
-                  <div class="sub-header">
-                    <h2>Console</h2>
-                  </div>
-                  <div class="row-fluid row-fluid-alternate-bg">
-                    <div class="span12">
-                        <div id="console">Waiting for connection...</div>
-                    </div>
-                  </div>
-                </section>
-
                 <!-- DS Data
                 ================================================== -->
                 <section id="feedback-section">
@@ -135,7 +125,7 @@
                         <td>38</td>
                         <td>Integer</td>
                         <td>
-                            <div class="progress">
+                            <div class="progress progress-mini">
                               <div class="bar" style="width: 40%;"></div>
                             </div>
                         </td>
@@ -143,9 +133,36 @@
                     </tbody>
                   </table>
                 </section>
+            </div>
+          </div>
+
+
+
+
+          <div id="console-div" style="display: none;">
+            <div id="content">
+                <!-- Navbar
+                ================================================== -->
+                <section id="setup-section">
+                  <header>
+                    <h1>Console/Debug</h1>
+                  </header>
+                </section>
+                <!-- Console
+                ================================================== -->
+                <section id="console-section">
+                  <div class="row-fluid row-fluid-alternate-bg">
+                    <div class="span12">
+                        <div id="console">Waiting for connection...</div>
+                    </div>
+                  </div>
+                </section>
 
             </div>
           </div>
+
+
+
           <div id="setup-div" style="display: none;">
             <div id="content">
                 <!-- Navbar
@@ -172,16 +189,16 @@
                 ================================================== -->
                 <section id="joystick-section">
                   <div class="sub-header">
-                    <h2>Joystick Config</h2>
+                    <h2>Joystick Mapping</h2>
                   </div>
                   <div class="row-fluid row-fluid-alternate-bg">
                     <div class="span12">
 
-                        <div id='no-gamepad-support'>
+                        <div id="no-gamepad-support" style="display: none;">
                           Your browser does not seem to support Gamepad API, or it might be
                           we’re not detecting it very well. Sorry!
                         </div>
-                        <div id='no-gamepads-connected'>
+                        <div id="no-gamepads-connected" style="display: none;">
                           No gamepads seem to be connected. Be sure to plug in a gamepad and then
                           press any of its buttons to activate it.
                         </div>
@@ -206,10 +223,6 @@
     <script src="js/robotlink.js"></script>
     <script src="js/joystickhandler.js"></script>
     <script src="js/charts.js"></script>
-    <script type="text/javascript">
-        joystickHandler.init();
-        gamepadSupport.init();
-    </script>
 
   </body>
 </html>
