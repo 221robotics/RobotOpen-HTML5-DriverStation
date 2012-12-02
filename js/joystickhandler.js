@@ -101,9 +101,6 @@ var joystickHandler = {
    */
   updateAxis: function(value, gamepadId, labelId, stickId, horizontal) {
 
-    if (gamepadId.indexOf('axis-y') != -1)
-      value *= -1;
-
     var adjustedVal;
 
     if (value > .05)
