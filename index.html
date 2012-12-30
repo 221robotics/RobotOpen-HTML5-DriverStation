@@ -9,6 +9,7 @@
 
     <link href="css/inspiritas.css" rel="stylesheet">
     <link href="css/robotopen.css" rel="stylesheet">
+    <script data-main="js/main" src="lib/require.js"></script>
 </head>
 
 <body>
@@ -47,6 +48,9 @@
                       </li>
                       <li id="console-link">
                         <a href="#"><i class="icon-warning-sign icon-white"></i> Console</a>
+                      </li>
+                      <li id="parameters-link">
+                        <a href="#"><i class="icon-cog icon-white"></i> Parameters</a>
                       </li>
                       <li id="setup-link">
                         <a href="#"><i class="icon-wrench icon-white"></i> Setup</a>
@@ -164,6 +168,30 @@
 
 
 
+          <div id="parameters-div" style="display: none;">
+            <div id="content">
+                <!-- Navbar
+                ================================================== -->
+                <section id="parameters-heading-section">
+                  <header>
+                    <h1>Parameters</h1>
+                  </header>
+                </section>
+                <!-- Console
+                ================================================== -->
+                <section id="parameters-section">
+                  <div class="row-fluid row-fluid-alternate-bg">
+                    <div class="span12">
+                      <b>Waiting for connection...</b>
+                    </div>
+                  </div>
+                </section>
+
+            </div>
+          </div>
+
+
+
           <div id="setup-div" style="display: none;">
             <div id="content">
                 <!-- Navbar
@@ -210,19 +238,6 @@
         </div>
     </div>
 </div><!-- /container -->
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="lib/jquery.min.js"></script>
-    <script src="lib/highcharts.js"></script>
-    <script src="lib/gamepad.js"></script>
-    <script src="lib/bootstrap.min.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/networking.js"></script>
-    <script src="js/robotlink.js"></script>
-    <script src="js/joystickhandler.js"></script>
-    <script src="js/charts.js"></script>
 
   </body>
 </html>

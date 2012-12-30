@@ -1,13 +1,10 @@
-/*
- * A highcharts spline graph, customized for a nicer Inspiritas-look.
- *
- * All the options can be separated into a reusable object,
- * in order to create multiple charts with the same looks:
- * http://www.highcharts.com/documentation/how-to-use
- *
- * TODO: Design the tooltips when hovering items.
- */
-new Highcharts.Chart({
+define([
+  'jquery',
+  'highcharts',
+], function($, highcharts){
+  var buildGraph = function(){
+    
+    new Highcharts.Chart({
     chart: {
         renderTo: 'mainChart',
         defaultSeriesType: 'spline',
@@ -116,4 +113,10 @@ new Highcharts.Chart({
         // Just some random data. Replace this with your own.
         data: [4, 5, 8, 9, 10, 11, 10, 8, 7, 6, 9, 10, 13, 15, 16, 18, 15, 12, 10, 9, 8, 5, 8, 9, 10, 13, 15, 14]
     }]
+});
+  }
+
+  return {
+    buildGraph: buildGraph
+  };
 });
