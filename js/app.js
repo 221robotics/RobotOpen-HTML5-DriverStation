@@ -8,12 +8,15 @@ define([
   'robotlink',
   'joystickhandler',
   'charts',
-], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts){
+  'backbone',
+  'views/bundle'
+], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, BundleView){
   var init = function(){
 
     // setup connection
     joystickHandler.init();
 
+    // create new robot link object
     var rolink = new RobotLink();
 
     // bind joystick handler to rolink
@@ -84,6 +87,16 @@ define([
     $("#enable-btn").bind('click', enableRobot);
     $("#disable-btn").bind('click', disableRobot);
     $("#connect-btn").bind('click', connectRobot);
+
+    // disable backbone sync
+    Backbone.sync = function(method, model, success, error){ 
+      success();
+    }
+
+    var bundleView = new BundleView();
+    bundleView.addItem();
+    bundleView.addItem();
+    bundleView.addItem();
 
 
     /*

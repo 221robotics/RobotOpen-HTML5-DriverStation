@@ -11,10 +11,33 @@ require.config({
     underscore: '../lib/underscore.min'
   },
   shim: {
-        // load in proper order
-        'bootstrap': ['jquery'],
-        'highcharts': ['jquery'],
-        'backbone': ['underscore', 'json2', 'jquery']
+    'highcharts': {
+        //These script dependencies should be loaded before loading
+        //backbone.js
+        deps: ['jquery'],
+        //Once loaded, use the global 'Backbone' as the
+        //module value.
+        exports: 'Highcharts'
+    },
+    'bootstrap': {
+        //These script dependencies should be loaded before loading
+        //backbone.js
+        deps: ['jquery'],
+        //Once loaded, use the global 'Backbone' as the
+        //module value.
+        exports: 'Bootstrap'
+    },
+    'underscore': {
+        exports: '_'
+    },
+    'backbone': {
+        //These script dependencies should be loaded before loading
+        //backbone.js
+        deps: ['underscore', 'jquery', 'json2'],
+        //Once loaded, use the global 'Backbone' as the
+        //module value.
+        exports: 'Backbone'
+    }
   }
 });
 

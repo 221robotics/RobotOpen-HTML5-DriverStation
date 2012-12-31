@@ -35,6 +35,7 @@ define([
   // starting at [0]) and unified between Firefox and Chrome.
   var gamepads = [];
 
+  // Who do we notify when gamepad updates occur?
   var joyHandler = undefined;
 
   // Remembers the connected gamepads at the last check; used in Chrome
@@ -63,14 +64,12 @@ define([
     if (!gamepadSupportAvailable) {
       // It doesn’t seem Gamepad API is available – show a message telling
       // the visitor about it.
-      joyHandler.showNotSupported();
+      joyHandler.notSupported();
     } else {
       // Firefox supports the connect/disconnect event, so we attach event
       // handlers to those.
-      window.addEventListener('MozGamepadConnected',
-                              onGamepadConnect, false);
-      window.addEventListener('MozGamepadDisconnected',
-                              onGamepadDisconnect, false);
+      window.addEventListener('MozGamepadConnected', onGamepadConnect, false);
+      window.addEventListener('MozGamepadDisconnected', onGamepadDisconnect, false);
 
       // Since Chrome only supports polling, we initiate polling loop straight
       // away. For Firefox, we will only do it if we get a connect event.
@@ -88,7 +87,7 @@ define([
     // Add the new gamepad on the list of gamepads to look after.
     gamepads.push(event.gamepad);
 
-    // Ask the tester to update the screen to show more gamepads.
+    // Let the handler know that there are more gamepads
     joyHandler.updateGamepads(gamepads);
 
     // Start the polling loop to monitor button changes.
@@ -110,7 +109,7 @@ define([
       stopPolling();
     }
 
-    // Ask the tester to update the screen to remove the gamepad.
+    // Let the handler know to remove the gamepad
     joyHandler.updateGamepads(gamepads);
   };
 
@@ -184,7 +183,7 @@ define([
       }
       prevTimestamps[i] = gamepad.timestamp;
 
-      updateDisplay(i);
+      updateGamepad(i);
     }
   };
 
@@ -223,70 +222,65 @@ define([
         }
       }
 
-      // Ask the tester to refresh the visual representations of gamepads
-      // on the screen.
+      // Let the handler know the index of gamepads has changed
       if (gamepadsChanged) {
         joyHandler.updateGamepads(gamepads);
       }
     }
   };
 
-  // Call the tester with new state and ask it to update the visual
-  // representation of a given gamepad.
-  var updateDisplay = function(gamepadId) {
+  var scaleAxis = function(value) {
+    if (value > .05)
+      return Math.round((value*128) + 127);
+    else if (value < -.05)
+      return Math.round(127 - (value*127*-1));
+    else
+      return 127;
+  };
+
+  // Call the handler with new state of this particular gamepad
+  var updateGamepad = function(gamepadId) {
     var gamepad = gamepads[gamepadId];
 
-    // Update all the buttons (and their corresponding labels) on screen.
-    joyHandler.updateButton(gamepad.buttons[0], gamepadId, 'button-1');
-    joyHandler.updateButton(gamepad.buttons[1], gamepadId, 'button-2');
-    joyHandler.updateButton(gamepad.buttons[2], gamepadId, 'button-3');
-    joyHandler.updateButton(gamepad.buttons[3], gamepadId, 'button-4');
+    // Update all the buttons (and their corresponding labels)
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[0]), gamepadId, 'button-a');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[1]), gamepadId, 'button-b');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[2]), gamepadId, 'button-x');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[3]), gamepadId, 'button-y');
 
-    joyHandler.updateButton(gamepad.buttons[4], gamepadId,
-        'button-left-shoulder-top');
-    joyHandler.updateButton(gamepad.buttons[6], gamepadId,
-        'button-left-shoulder-bottom');
-    joyHandler.updateButton(gamepad.buttons[5], gamepadId,
-        'button-right-shoulder-top');
-    joyHandler.updateButton(gamepad.buttons[7], gamepadId,
-        'button-right-shoulder-bottom');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[4]), gamepadId, 'button-left-shoulder');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[5]), gamepadId, 'button-right-shoulder');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[6]), gamepadId, 'button-left-trigger');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[7]), gamepadId, 'button-right-trigger');
 
-    joyHandler.updateButton(gamepad.buttons[8], gamepadId, 'button-select');
-    joyHandler.updateButton(gamepad.buttons[9], gamepadId, 'button-start');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[8]), gamepadId, 'button-select');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[9]), gamepadId, 'button-start');
 
-    joyHandler.updateButton(gamepad.buttons[10], gamepadId, 'stick-1');
-    joyHandler.updateButton(gamepad.buttons[11], gamepadId, 'stick-2');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[10]), gamepadId, 'button-left-stick');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[11]), gamepadId, 'button-right-stick');
 
-    joyHandler.updateButton(gamepad.buttons[12], gamepadId, 'button-dpad-top');
-    joyHandler.updateButton(gamepad.buttons[13], gamepadId, 'button-dpad-bottom');
-    joyHandler.updateButton(gamepad.buttons[14], gamepadId, 'button-dpad-left');
-    joyHandler.updateButton(gamepad.buttons[15], gamepadId, 'button-dpad-right');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[12]), gamepadId, 'button-dpad-up');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[13]), gamepadId, 'button-dpad-down');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[14]), gamepadId, 'button-dpad-left');
+    joyHandler.updateComponent(Math.round(255*gamepad.buttons[15]), gamepadId, 'button-dpad-right');
 
-    // Update all the analogue sticks.
-    joyHandler.updateAxis(gamepad.axes[0], gamepadId,
-        'stick-1-axis-x', 'stick-1', true);
-    joyHandler.updateAxis(gamepad.axes[1], gamepadId,
-        'stick-1-axis-y', 'stick-1', false);
-    joyHandler.updateAxis(gamepad.axes[2], gamepadId,
-        'stick-2-axis-x', 'stick-2', true);
-    joyHandler.updateAxis(gamepad.axes[3], gamepadId,
-        'stick-2-axis-y', 'stick-2', false);
+    // Update all the analog sticks.
+    joyHandler.updateComponent(scaleAxis(gamepad.axes[0]), gamepadId, 'stick-left-axis-x');
+    joyHandler.updateComponent(scaleAxis(gamepad.axes[1]), gamepadId, 'stick-left-axis-y');
+    joyHandler.updateComponent(scaleAxis(gamepad.axes[2]), gamepadId, 'stick-right-axis-x');
+    joyHandler.updateComponent(scaleAxis(gamepad.axes[3]), gamepadId, 'stick-right-axis-y');
 
     // Update extraneous buttons.
     var extraButtonId = TYPICAL_BUTTON_COUNT;
     while (typeof gamepad.buttons[extraButtonId] != 'undefined') {
-      joyHandler.updateButton(gamepad.buttons[extraButtonId], gamepadId,
-          'extra-button-' + extraButtonId);
-
+      joyHandler.updateComponent(Math.round(255*gamepad.buttons[extraButtonId]), gamepadId, 'button-extra-' + extraButtonId);
       extraButtonId++;
     }
 
     // Update extraneous axes.
     var extraAxisId = TYPICAL_AXIS_COUNT;
     while (typeof gamepad.axes[extraAxisId] != 'undefined') {
-      joyHandler.updateAxis(gamepad.axes[extraAxisId], gamepadId,
-          'extra-axis-' + extraAxisId);
-
+      joyHandler.updateComponent(scaleAxis(gamepad.axes[extraAxisId]), gamepadId, 'axis-extra-' + extraAxisId);
       extraAxisId++;
     }
 

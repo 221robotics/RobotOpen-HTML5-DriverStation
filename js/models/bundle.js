@@ -4,7 +4,10 @@ define([
 ], function(_, Backbone){
   var BundleModel = Backbone.Model.extend({
     defaults: {
-      name: "Bundle"
+      name: null,
+      value: 0,
+      type: null,
+      percent: 0
     }
   });
   // Return the model

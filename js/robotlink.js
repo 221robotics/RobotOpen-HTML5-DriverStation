@@ -42,19 +42,25 @@ define([
         127,  // Analog Left Y Axis
         127,  // Analog Right X Axis
         127,  // Analog Right Y Axis
-        0,    // Button 1
-        0,    // Button 2
-        0,    // Button 3
-        0,    // Button 4
-        0,    // Left Stick Button
-        0,    // Right Stick Button
-        0,    // D-Pad
+        0,    // Button A
+        0,    // Button B
+        0,    // Button X
+        0,    // Button Y
         0,    // Left Shoulder
         0,    // Right Shoulder
         0,    // Left Trigger
         0,    // Right Trigger
-        0,    // Start
         0,    // Select
+        0,    // Start
+        0,    // Left Stick Button
+        0,    // Right Stick Button
+        0,    // Up
+        0,    // Down
+        0,    // Left
+        0,    // Right
+        0,    // Aux
+        0,    // Aux
+        0,    // Aux
         0     // Aux
       );
     };
@@ -71,57 +77,67 @@ define([
       // instance.debug(index + "--" + id + "--" + value);
 
       if (index == 0) {
-        if (id == 'button-1') {
-            instance.joy1[4] = value;
-          }
-          else if (id == 'button-2') {
-            instance.joy1[5] = value;
-          }
-          else if (id == 'button-3') {
-            instance.joy1[6] = value;
-          }
-          else if (id == 'button-4') {
-            instance.joy1[7] = value;
-          }
-          else if (id == 'button-left-shoulder-top') {
-            instance.joy1[11] = value;
-          }
-          else if (id == 'button-left-shoulder-bottom') {
-            instance.joy1[13] = value;
-          }
-          else if (id == 'button-right-shoulder-top') {
-            instance.joy1[12] = value;
-          }
-          else if (id == 'button-right-shoulder-bottom') {
-            instance.joy1[14] = value;
-          }
-          else if (id == 'button-select') {
-            instance.joy1[16] = value;
-          }
-          else if (id == 'button-start') {
-            instance.joy1[15] = value;
-          }
-          else if (id == 'stick-1') {
-            instance.joy1[8] = value;
-          }
-          else if (id == 'stick-2') {
-            instance.joy1[9] = value;
-          }
-          else if (id == 'button-dpad') {
-            instance.joy1[10] = value;
-          }
-          else if (id == 'stick-1-axis-x') {
-            instance.joy1[0] = value;
-          }
-          else if (id == 'stick-1-axis-y') {
-            instance.joy1[1] = 254 - value;
-          }
-          else if (id == 'stick-2-axis-x') {
-            instance.joy1[2] = value;
-          }
-          else if (id == 'stick-2-axis-y') {
-            instance.joy1[3] = 254 - value;
-          }
+        if (id == 'stick-left-axis-x') {
+          instance.joy1[0] = value;
+        }
+        else if (id == 'stick-left-axis-y') {
+          instance.joy1[1] = 255 - value;
+        }
+        else if (id == 'stick-right-axis-x') {
+          instance.joy1[2] = value;
+        }
+        else if (id == 'stick-right-axis-y') {
+          instance.joy1[3] = 255 - value;
+        }
+        else if (id == 'button-a') {
+          instance.joy1[4] = value;
+        }
+        else if (id == 'button-b') {
+          instance.joy1[5] = value;
+        }
+        else if (id == 'button-x') {
+          instance.joy1[6] = value;
+        }
+        else if (id == 'button-y') {
+          instance.joy1[7] = value;
+        }
+        else if (id == 'button-left-shoulder') {
+          instance.joy1[8] = value;
+        }
+        else if (id == 'button-right-shoulder') {
+          instance.joy1[9] = value;
+        }
+        else if (id == 'button-left-trigger') {
+          instance.joy1[10] = value;
+        }
+        else if (id == 'button-right-trigger') {
+          instance.joy1[11] = value;
+        }
+        else if (id == 'button-select') {
+          instance.joy1[12] = value;
+        }
+        else if (id == 'button-start') {
+          instance.joy1[13] = value;
+        }
+        else if (id == 'button-left-stick') {
+          instance.joy1[14] = value;
+        }
+        else if (id == 'button-right-stick') {
+          instance.joy1[15] = value;
+        }
+        else if (id == 'button-dpad-up') {
+          instance.joy1[16] = value;
+        }
+        else if (id == 'button-dpad-down') {
+          instance.joy1[17] = value;
+        }
+        else if (id == 'button-dpad-left') {
+          instance.joy1[18] = value;
+        }
+        else if (id == 'button-dpad-right') {
+          instance.joy1[19] = value;
+        }
+          
       }
 
       if (id.indexOf('num-gamepads') != -1) {
