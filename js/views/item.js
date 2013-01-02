@@ -2,8 +2,7 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'collections/bundles'
-], function($, _, Backbone, BundleCollection){
+], function($, _, Backbone){
 
   var ItemView = Backbone.View.extend({
     tagName: 'tr', // name of tag to be created        

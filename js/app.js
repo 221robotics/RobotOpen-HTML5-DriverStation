@@ -9,8 +9,10 @@ define([
   'joystickhandler',
   'charts',
   'backbone',
-  'views/bundle'
-], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, BundleView){
+  'views/bundle',
+  'views/status',
+  'models/status'
+], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, BundleView, StatusView, StatusModel){
   var init = function(){
 
     // setup connection
@@ -27,6 +29,11 @@ define([
 
     // build the highcharts graph
     charts.buildGraph();
+
+    var bundleView = new BundleView();
+    bundleView.addItem();
+    bundleView.addItem();
+    bundleView.addItem();
     
     function removeAllActive() {
       $("#control-link").removeClass('selected');
@@ -64,7 +71,8 @@ define([
     }
 
     function enableRobot(e) {
-      rolink.enable();
+      //rolink.enable();
+      bundleView.clearAll();
     }
 
     function disableRobot(e) {
@@ -93,10 +101,14 @@ define([
       success();
     }
 
-    var bundleView = new BundleView();
-    bundleView.addItem();
-    bundleView.addItem();
-    bundleView.addItem();
+    // status view
+    var status = new StatusModel();
+    var statView = new StatusView({
+        model: status
+    });
+    statView.render();
+
+    
 
 
     /*

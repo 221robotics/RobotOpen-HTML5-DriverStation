@@ -9,7 +9,7 @@ define([
     el: $('#bundles'),
 
     initialize: function(){
-      _.bindAll(this, 'render', 'addItem', 'appendItem'); // every function that uses 'this' as the current object should be in here
+      _.bindAll(this, 'render', 'addItem', 'appendItem', 'clearAll'); // every function that uses 'this' as the current object should be in here
       
       this.collection = new BundleCollection();
       this.collection.bind('add', this.appendItem); // collection event binder
@@ -22,6 +22,12 @@ define([
       _(this.collection.models).each(function(item){ // in case collection is not empty
         self.appendItem(item);
       }, this);
+    },
+    clearAll: function(){
+      // remove all items
+      while (this.collection.models.length > 0) {
+        this.collection.remove(this.collection.models[0]);
+      }
     },
     addItem: function(){
       // TODO - create bundle object/model here
