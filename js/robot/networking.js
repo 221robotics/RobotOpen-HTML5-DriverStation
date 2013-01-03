@@ -8,20 +8,21 @@
 
     var baseClient = function(socketMode) {
       var address;
+      var port;
       var socketInfo;
       var connected = false;
       var callbacks = [];
       var self = this;
-      var defaultPort = 22211;
 
-      this.connect = function(inAddress, callback, responseHandler) {
+      this.connect = function(inAddress, inPort, callback, responseHandler) {
         if(!!inAddress == false) throw NoAddressException;
 
         address = inAddress;
-        console.debug('creating socket', socketMode, address, defaultPort);
+        port = inPort;
+        console.debug('creating socket', socketMode, address, port);
         socket.create(socketMode, {}, function(_socketInfo) {
           socketInfo = _socketInfo;
-          socket.connect(socketInfo.socketId, address, defaultPort, function(connectResult) {
+          socket.connect(socketInfo.socketId, address, port, function(connectResult) {
             console.debug('connectResult', connectResult);
             connected = (connectResult == 0);
             socket.ondata = function(result) {

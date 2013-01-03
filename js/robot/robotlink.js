@@ -8,15 +8,19 @@ define([
     var instance;
 
     // Start with the constructor
-    function RobotLink(ip) {
+    function RobotLink(ip, port) {
       instance = this;
 
       // setup ip address and port
-      if (ip == null) {
+      if (ip == null)
         instance.ip = "10.0.0.22";
-      } else {
+      else
         instance.ip = ip;
-      }
+
+      if (port == null)
+        instance.port = 22211;
+      else
+        instance.port = 22211;
 
       // the UDP socket connection to the robot
       instance.socket = null;
@@ -32,7 +36,7 @@ define([
       instance.rx_count = 0;
       instance.tx_count = 0;
       // data xmit rate (ms)
-      instance.xmit_rate = 100;
+      instance.xmit_rate = 75;
 
       // joystick count
       instance.joy_count = 0;
@@ -175,7 +179,7 @@ define([
           // pass the robotlink instance to the socket object
           var t = this;
         
-        instance.socket.connect(instance.ip,
+        instance.socket.connect(instance.ip, instance.port,
           function() {
               t.socket_on_open(t);
           }
