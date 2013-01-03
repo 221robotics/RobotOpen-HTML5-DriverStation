@@ -2,7 +2,8 @@ define([
   'jquery',
   'underscore',
   'backbone',
-], function($, _, Backbone){
+  'models/status'
+], function($, _, Backbone, StatusModel){
 
   var StatusView = Backbone.View.extend({
     el: $('#stats'),    
@@ -28,7 +29,7 @@ define([
       var hours = Math.floor(time / 3600);
       time = time - hours * 3600;
       var minutes = Math.floor(time / 60);
-      var seconds = time - minutes * 60;
+      var seconds = Math.floor(time - minutes * 60);
 
       return this.pad(hours) + ":" + this.pad(minutes) + ":" + this.pad(seconds);
     },
@@ -53,7 +54,10 @@ define([
           statTemplate += '</div><div><small>state</small></div></div><div class="span2"><div class="kpi">';
           
           var dateDiff = this.model.get('connectionEnd').getTime()-this.model.get('connectionStart').getTime();
-          statTemplate += this.millisToHoursMinutesSeconds(dateDiff);
+          if (dateDiff > 0)
+            statTemplate += this.millisToHoursMinutesSeconds(dateDiff);
+          else
+            statTemplate += '00:00:00';
           
           statTemplate += '</div><div><small>connection time</small></div></div><div class="span2"><div class="kpi">';
           
@@ -70,7 +74,16 @@ define([
       $(this.el).html(statTemplate);
     }
   });
+
+  // status view
+  var statModel = new StatusModel();
+  var statView = new StatusView({
+      model: statModel
+  });
+
+  // first pass render
+  statView.render();
   
-  // Our module now returns our view
-  return StatusView;
+  // return the singleton model
+  return statModel;
 });

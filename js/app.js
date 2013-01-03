@@ -2,18 +2,22 @@
 define([
   'jquery',
   'bootstrap',
-  'gamepad',
+  'gamepad/gamepad',
   'highcharts',
-  'networking',
-  'robotlink',
-  'joystickhandler',
-  'charts',
+  'robot/networking',
+  'robot/robotlink',
+  'gamepad/joystickhandler',
+  'views/charts',
   'backbone',
   'views/bundle',
-  'views/status',
-  'models/status'
-], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, BundleView, StatusView, StatusModel){
+  'views/status'
+], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, BundleView, statView){
   var init = function(){
+
+    // disable backbone sync
+    Backbone.sync = function(method, model, success, error){ 
+      success();
+    }
 
     // setup connection
     joystickHandler.init();
@@ -29,6 +33,9 @@ define([
 
     // build the highcharts graph
     charts.buildGraph();
+
+    // bind statView to robot link
+    rolink.setStatModel(statView);
 
     var bundleView = new BundleView();
     bundleView.addItem();
@@ -71,8 +78,7 @@ define([
     }
 
     function enableRobot(e) {
-      //rolink.enable();
-      bundleView.clearAll();
+      rolink.enable();
     }
 
     function disableRobot(e) {
@@ -80,7 +86,7 @@ define([
     }
 
     function connectRobot(e) {
-      if (!window.rolink.is_connected)
+      if (!rolink.is_connected)
         rolink.connect();
     }
 
@@ -96,31 +102,6 @@ define([
     $("#disable-btn").bind('click', disableRobot);
     $("#connect-btn").bind('click', connectRobot);
 
-    // disable backbone sync
-    Backbone.sync = function(method, model, success, error){ 
-      success();
-    }
-
-    // status view
-    var status = new StatusModel();
-    var statView = new StatusView({
-        model: status
-    });
-    statView.render();
-
-    
-
-
-    /*
-
-    protocol version
-    enable state
-    connection state
-    firmware version
-    device name (powder keg board)
-    uptime
-
-    */
 
   }
 

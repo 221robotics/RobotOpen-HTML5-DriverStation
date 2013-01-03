@@ -20,13 +20,6 @@
 define([
   'jquery',
 ], function($){
-  // A number of typical buttons recognized by Gamepad API and mapped to
-  // standard controls. Any extraneous buttons will have larger indexes.
-  var TYPICAL_BUTTON_COUNT = 16;
-
-  // A number of typical axes recognized by Gamepad API and mapped to
-  // standard controls. Any extraneous buttons will have larger indexes.
-  var TYPICAL_AXIS_COUNT = 4;
 
   // Whether we’re requestAnimationFrameing like it’s 1999.
   var ticking = false;
@@ -242,50 +235,17 @@ define([
   var updateGamepad = function(gamepadId) {
     var gamepad = gamepads[gamepadId];
 
-    // Update all the buttons (and their corresponding labels)
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[0]), gamepadId, 'button-a');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[1]), gamepadId, 'button-b');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[2]), gamepadId, 'button-x');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[3]), gamepadId, 'button-y');
-
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[4]), gamepadId, 'button-left-shoulder');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[5]), gamepadId, 'button-right-shoulder');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[6]), gamepadId, 'button-left-trigger');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[7]), gamepadId, 'button-right-trigger');
-
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[8]), gamepadId, 'button-select');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[9]), gamepadId, 'button-start');
-
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[10]), gamepadId, 'button-left-stick');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[11]), gamepadId, 'button-right-stick');
-
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[12]), gamepadId, 'button-dpad-up');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[13]), gamepadId, 'button-dpad-down');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[14]), gamepadId, 'button-dpad-left');
-    joyHandler.updateComponent(Math.round(255*gamepad.buttons[15]), gamepadId, 'button-dpad-right');
-
-    // Update all the analog sticks.
-    joyHandler.updateComponent(scaleAxis(gamepad.axes[0]), gamepadId, 'stick-left-axis-x');
-    joyHandler.updateComponent(scaleAxis(gamepad.axes[1]), gamepadId, 'stick-left-axis-y');
-    joyHandler.updateComponent(scaleAxis(gamepad.axes[2]), gamepadId, 'stick-right-axis-x');
-    joyHandler.updateComponent(scaleAxis(gamepad.axes[3]), gamepadId, 'stick-right-axis-y');
-
-    // Update extraneous buttons.
-    var extraButtonId = TYPICAL_BUTTON_COUNT;
-    while (typeof gamepad.buttons[extraButtonId] != 'undefined') {
-      joyHandler.updateComponent(Math.round(255*gamepad.buttons[extraButtonId]), gamepadId, 'button-extra-' + extraButtonId);
-      extraButtonId++;
+    // send axis updates
+    for (var i=0; i<gamepad.axes.length; i++) {
+      joyHandler.updateComponent(scaleAxis(gamepad.axes[i]), gamepadId, 'a'+i);
     }
 
-    // Update extraneous axes.
-    var extraAxisId = TYPICAL_AXIS_COUNT;
-    while (typeof gamepad.axes[extraAxisId] != 'undefined') {
-      joyHandler.updateComponent(scaleAxis(gamepad.axes[extraAxisId]), gamepadId, 'axis-extra-' + extraAxisId);
-      extraAxisId++;
+    // send button updates
+    for (var i=0; i<gamepad.buttons.length; i++) {
+      joyHandler.updateComponent(Math.round(255*gamepad.buttons[i]), gamepadId, 'b'+i);
     }
 
   };
-
 
   // return the init call
   return {

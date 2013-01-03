@@ -13,6 +13,9 @@ define([
       // print debug statements to console
       debugging: false,
 
+      // keep track of components that change (lookup)
+      componentCache: {},
+
       /**
        * Tell the user the browser doesn’t support Gamepad API.
        */
@@ -79,9 +82,18 @@ define([
        */
       updateComponent: function(value, gamepadId, id) {
 
-        // Send update to all subscribers
-        for (var i=0;i<this.callbacks.length;i++) { 
-          this.callbacks[i](gamepadId, id, value);
+        // generate a key to identify the gamepad index and component ID
+        var key = gamepadId + ':' + id;
+
+        // check if this value has changed since the last update
+        if (componentCache[key] != value) {
+          // Send update to all subscribers
+          for (var i=0;i<this.callbacks.length;i++) {
+            this.callbacks[i](gamepadId, id, value);
+          }
+
+          // the component did change, cache it
+          componentCache[key] = value;
         }
 
       }

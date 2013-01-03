@@ -37,6 +37,9 @@ define([
       // joystick count
       instance.joy_count = 0;
 
+      // how we update the status model
+      instance.statModel = null;
+
       instance.joy1 = new Array(
         127,  // Analog Left X Axis
         127,  // Analog Left Y Axis
@@ -72,69 +75,74 @@ define([
       }
     };
 
+    RobotLink.prototype.setStatModel = function(sModel) {
+      instance.statModel = sModel;
+    }
+
     RobotLink.prototype.handleJoyData = function(index, id, value) {
       // parse out data
       // instance.debug(index + "--" + id + "--" + value);
 
+      // TODO: handle gamepad mapping here
       if (index == 0) {
-        if (id == 'stick-left-axis-x') {
+        if (id == 'a0') {
           instance.joy1[0] = value;
         }
-        else if (id == 'stick-left-axis-y') {
+        else if (id == 'a1') {
           instance.joy1[1] = 255 - value;
         }
-        else if (id == 'stick-right-axis-x') {
+        else if (id == 'a2') {
           instance.joy1[2] = value;
         }
-        else if (id == 'stick-right-axis-y') {
+        else if (id == 'a3') {
           instance.joy1[3] = 255 - value;
         }
-        else if (id == 'button-a') {
+        else if (id == 'b0') {
           instance.joy1[4] = value;
         }
-        else if (id == 'button-b') {
+        else if (id == 'b1') {
           instance.joy1[5] = value;
         }
-        else if (id == 'button-x') {
+        else if (id == 'b2') {
           instance.joy1[6] = value;
         }
-        else if (id == 'button-y') {
+        else if (id == 'b3') {
           instance.joy1[7] = value;
         }
-        else if (id == 'button-left-shoulder') {
+        else if (id == 'b4') {
           instance.joy1[8] = value;
         }
-        else if (id == 'button-right-shoulder') {
+        else if (id == 'b5') {
           instance.joy1[9] = value;
         }
-        else if (id == 'button-left-trigger') {
+        else if (id == 'b6') {
           instance.joy1[10] = value;
         }
-        else if (id == 'button-right-trigger') {
+        else if (id == 'b7') {
           instance.joy1[11] = value;
         }
-        else if (id == 'button-select') {
+        else if (id == 'b8') {
           instance.joy1[12] = value;
         }
-        else if (id == 'button-start') {
+        else if (id == 'b9') {
           instance.joy1[13] = value;
         }
-        else if (id == 'button-left-stick') {
+        else if (id == 'b10') {
           instance.joy1[14] = value;
         }
-        else if (id == 'button-right-stick') {
+        else if (id == 'b11') {
           instance.joy1[15] = value;
         }
-        else if (id == 'button-dpad-up') {
+        else if (id == 'b12') {
           instance.joy1[16] = value;
         }
-        else if (id == 'button-dpad-down') {
+        else if (id == 'b13') {
           instance.joy1[17] = value;
         }
-        else if (id == 'button-dpad-left') {
+        else if (id == 'b14') {
           instance.joy1[18] = value;
         }
-        else if (id == 'button-dpad-right') {
+        else if (id == 'b15') {
           instance.joy1[19] = value;
         }
           
@@ -148,12 +156,16 @@ define([
 
     RobotLink.prototype.enable = function() {
       // enable the robot
-      instance.enabled = true;
+      if (instance.is_connected) {
+        instance.enabled = true;
+        instance.statModel.set({enabled: true});
+      }
     };
 
     RobotLink.prototype.disable = function() {
       // disable the robot
       instance.enabled = false;
+      instance.statModel.set({enabled: false});
     };
 
     RobotLink.prototype.connect = function() {
@@ -170,7 +182,7 @@ define([
         );
 
         instance.socket.receive(function(frame) {
-            t.socket_on_message(t, frame);
+          t.socket_on_message(t, frame);
         });
 
         return true;
@@ -183,6 +195,7 @@ define([
 
     RobotLink.prototype.robot_tx = function() {
       if (instance.is_connected) {
+        instance.statModel.set({connectionEnd: new Date()});
         // when the robot is disabled we must sent heartbeat frames to keep the connection alive
         if (!instance.enabled || instance.joy_count < 1) {
           var buf = new ArrayBuffer(3); // 2 bytes for each char
@@ -217,6 +230,7 @@ define([
         try {
           // increment tx count
           instance.tx_count++;
+          instance.statModel.set({packetTx: instance.tx_count});
 
           // transmit the frame or message to the robot
         instance.socket.send(frame);
@@ -240,6 +254,8 @@ define([
     };
 
     RobotLink.prototype.socket_on_open = function(link) {
+      instance.statModel.set({connected: true});
+      instance.statModel.set({connectionStart: new Date(), connectionEnd: new Date()});
       link.is_connected = true;
       link.debug("Socket opened.");
 
@@ -250,6 +266,7 @@ define([
 
     RobotLink.prototype.socket_on_message = function(link, frame) {
       link.rx_count++;
+      instance.statModel.set({packetRx: instance.rx_count});
 
       if (frame.data instanceof ArrayBuffer) {
         var bytearray = new Uint8Array(frame.data);
@@ -262,10 +279,22 @@ define([
         myString += bytearray[bytearray.length-1].toString(16);
 
         link.debug("RX: " + myString);
+
+        /*
+
+        protocol version
+        enable state
+        connection state
+        firmware version
+        device name (powder keg board)
+        uptime
+
+        */
       }
     };
 
     RobotLink.prototype.disconnect = function() {
+      instance.statModel.set({connected: false});
       instance.socket.disconnect();
       instance.disable();
       instance.socket = null;
