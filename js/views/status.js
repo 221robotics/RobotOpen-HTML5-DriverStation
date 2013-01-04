@@ -2,8 +2,9 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'models/status'
-], function($, _, Backbone, StatusModel){
+  'models/status',
+  'utils'
+], function($, _, Backbone, StatusModel, utils){
 
   var StatusView = Backbone.View.extend({
     el: $('#stats'),    
@@ -15,15 +16,6 @@ define([
       this.model.bind('change', this.render);
     },
 
-    pad: function(number) {
-        var result = "" + number;
-        if (result.length < 2) {
-            result = "0" + result;
-        }
-
-        return result;
-    },
-
     millisToHoursMinutesSeconds: function(millis) {
       var time = millis / 1000;
       var hours = Math.floor(time / 3600);
@@ -31,7 +23,7 @@ define([
       var minutes = Math.floor(time / 60);
       var seconds = Math.floor(time - minutes * 60);
 
-      return this.pad(hours) + ":" + this.pad(minutes) + ":" + this.pad(seconds);
+      return utils.pad(hours, 2) + ":" + utils.pad(minutes, 2) + ":" + utils.pad(seconds, 2);
     },
 
     // `render()` now includes two extra `span`s corresponding to the actions swap and delete.
@@ -62,7 +54,7 @@ define([
           statTemplate += '</div><div><small>connection time</small></div></div><div class="span2"><div class="kpi">';
           
         if (this.model.get('averageLatency') > 0)
-          statTemplate += this.model.get('averageLatency');
+          statTemplate += this.model.get('averageLatency') + ' ms';
         else
           statTemplate += 'n/a';
           

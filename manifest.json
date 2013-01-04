@@ -19,6 +19,8 @@
     "background": {
       "scripts": ["chromeapp.js"]
     }
-  }
+  },
+
+  "icons": { "128": "logo.png" }
   
 }

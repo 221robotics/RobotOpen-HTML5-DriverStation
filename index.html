@@ -44,7 +44,7 @@
                 <nav>
                     <ul class="nav">
                       <li class="selected" id="control-link">
-                        <a href="#"><i class="icon-play"></i> Control</a>
+                        <a href="#"><i class="icon-play icon-white"></i> Control</a>
                       </li>
                       <li id="console-link">
                         <a href="#"><i class="icon-warning-sign icon-white"></i> Console</a>
@@ -126,7 +126,7 @@
                 <section id="console-section">
                   <div class="row-fluid row-fluid-alternate-bg">
                     <div class="span12">
-                        <div id="console">Waiting for connection...</div>
+                        <div id="console"></div>
                     </div>
                   </div>
                 </section>
@@ -150,7 +150,7 @@
                 <section id="parameters-section">
                   <div class="row-fluid row-fluid-alternate-bg">
                     <div class="span12">
-                      <b>Waiting for connection...</b>
+                        <div id="parameters">Waiting for connection...</div>
                     </div>
                   </div>
                 </section>
@@ -166,28 +166,12 @@
                 ================================================== -->
                 <section id="setup-section">
                   <header>
-                    <div class="pull-right">
-                        <a class="btn btn-small">Scan for Joysticks</a>
-                    </div>
                     <h1>RobotOpen Setup</h1>
                   </header>
-                  <div class="row-fluid">
-                    <div class="span2">
-                        <div class="kpi">0</div>
-                        <div><small>joysticks detected</small></div>
-                    </div>
-                    <div class="span2">
-                        <div class="kpi">0</div>
-                        <div><small>joysticks mapped</small></div>
-                    </div>
-                  </div>
                 </section>
                 <!-- Joystick Config
                 ================================================== -->
                 <section id="joystick-section">
-                  <div class="sub-header">
-                    <h2>Joystick Mapping</h2>
-                  </div>
                   <div class="row-fluid row-fluid-alternate-bg">
                     <div class="span12">
 
@@ -196,6 +180,33 @@
                         </div>
                         <div id="no-gamepads-connected" style="display: none;">
                           No gamepads seem to be connected. Plug in a gamepad and then press any of its buttons to activate it.
+                        </div>
+                        <br />
+                        <div class="bs-docs-example">
+                          <ul id="myTab" class="nav nav-tabs">
+                            <li class="active"><a href="#joy1" data-toggle="tab">Gamepad #1</a></li>
+                            <li><a href="#joy2" data-toggle="tab">Gamepad #2</a></li>
+                            <li><a href="#joy3" data-toggle="tab">Gamepad #3</a></li>
+                            <li><a href="#joy4" data-toggle="tab">Gamepad #4</a></li>
+                            <li><a href="#robot" data-toggle="tab">Robot</a></li>
+                          </ul>
+                          <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane fade in active" id="joy1">
+                              <p>joy1</p>
+                            </div>
+                            <div class="tab-pane fade" id="joy2">
+                              <p>joy2</p>
+                            </div>
+                            <div class="tab-pane fade" id="joy3">
+                              <p>joy3</p>
+                            </div>
+                            <div class="tab-pane fade" id="joy4">
+                              <p>joy4</p>
+                            </div>
+                            <div class="tab-pane fade" id="robot">
+                              <p>robot config</p>
+                            </div>
+                          </div>
                         </div>
 
                     </div>

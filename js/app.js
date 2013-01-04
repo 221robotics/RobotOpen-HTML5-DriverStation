@@ -10,8 +10,9 @@ define([
   'views/charts',
   'backbone',
   'views/bundle',
-  'views/status'
-], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, BundleView, statView){
+  'views/status',
+  'views/console'
+], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, BundleView, statView, consoleview){
   var init = function(){
 
     // disable backbone sync
@@ -33,7 +34,7 @@ define([
 
     // build the highcharts graph
     charts.buildGraph();
-
+    
     // bind statView to robot link
     rolink.setStatModel(statView);
 
@@ -43,6 +44,7 @@ define([
     bundleView.addItem();
     
     function removeAllActive() {
+      consoleview.deactivate();
       $("#control-link").removeClass('selected');
       $("#console-link").removeClass('selected');
       $("#setup-link").removeClass('selected');
@@ -67,6 +69,7 @@ define([
 
     function showConsole(e) {
       removeAllActive();
+      consoleview.activate();
       $("#console-div").show();
       $("#console-link").addClass('selected');
     }

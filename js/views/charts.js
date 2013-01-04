@@ -2,9 +2,17 @@ define([
   'jquery',
   'highcharts',
 ], function($, highcharts){
+  var chart = null;
+
   var buildGraph = function(){
+
+    Highcharts.setOptions({
+      global : {
+        useUTC : false
+      }
+    });
     
-    new Highcharts.Chart({
+    chart = new Highcharts.Chart({
     chart: {
         renderTo: 'mainChart',
         defaultSeriesType: 'spline',
@@ -52,6 +60,8 @@ define([
         title: {
             text: ''
         },
+        min: 0,
+        max: 200,
         gridLineColor: '#FAFAFA',
         opposite: true,
         labels: {
@@ -63,18 +73,7 @@ define([
 
     xAxis: {
         type: 'datetime',
-        lineWidth: 0,
-        maxZoom: 5 * 24 * 3600 * 1000, // 5 days
-        tickInterval: 24 * 3600 * 1000, // 1 day
-        labels: {
-            formatter: function() {
-                return Highcharts.dateFormat('%e', this.value);
-            },
-            x: 0,
-            style: {
-                color: '#9fa2a5'
-            }
-        }
+        tickPixelInterval: 150
     },
 
     plotOptions: {
@@ -103,20 +102,34 @@ define([
         '#e268de' // purple
     ],
 
-    series: [ {
-        pointStart: Date.UTC(2012,11,3),
-        pointInterval: 24 * 3600 * 1000, // 1 day
+    series: [{
         name: 'Latency (ms)',
-        marker: {
-            symbol: 'circle'
-        },
-        // Just some random data. Replace this with your own.
-        data: [4, 5, 8, 9, 10, 11, 10, 8, 7, 6, 9, 10, 13, 15, 16, 18, 15, 12, 10, 9, 8, 5, 8, 9, 10, 13, 15, 14]
-    }]
-});
+        data: (function() {
+            // generate an array of random data
+            var data = [],
+                time = (new Date()).getTime(),
+                i;
+            for (i = -29; i <= 0; i++) {
+                data.push({
+                    x: time + i * 1000,
+                    y: 0
+                });
+            }
+            return data;
+        })()}]
+    });
+  };
+
+  var addPoint = function(val) {
+    if (chart != null) {
+        var series = chart.series[0];
+        var x = new Date().getTime();
+        series.addPoint([x, val], true, true);
+    }
   }
 
   return {
-    buildGraph: buildGraph
+    buildGraph: buildGraph,
+    addPoint: addPoint
   };
 });
