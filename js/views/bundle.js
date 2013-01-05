@@ -28,6 +28,8 @@ define([
       while (this.collection.models.length > 0) {
         this.collection.remove(this.collection.models[0]);
       }
+      // clear the view
+      this.$el.html('');
     },
     updateBundles: function(bundles){
       var self = this;

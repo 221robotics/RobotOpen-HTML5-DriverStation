@@ -7,6 +7,9 @@ define([
 
   var log = function(str) {
     if (active) {
+      if ($("#console").html() == 'Waiting for data...')
+        $("#console").html('');
+
       var now = new Date();
       $('#console').append("<p><b>["+utils.pad(now.getHours(), 2)+":"+utils.pad(now.getMinutes(), 2)+":"+utils.pad(now.getSeconds(), 2)+"."+utils.pad(now.getMilliseconds(), 3)+"]</b> "+str+"</p>");
       if ($('#console p').length > 50) {
@@ -26,7 +29,7 @@ define([
   }
 
   var clear = function() {
-    $("#console").html('');
+    $("#console").html('Waiting for data...');
   };
 
   return {
