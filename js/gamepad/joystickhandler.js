@@ -86,14 +86,14 @@ define([
         var key = gamepadId + ':' + id;
 
         // check if this value has changed since the last update
-        if (componentCache[key] != value) {
+        if (this.componentCache[key] != value) {
           // Send update to all subscribers
           for (var i=0;i<this.callbacks.length;i++) {
             this.callbacks[i](gamepadId, id, value);
           }
 
           // the component did change, cache it
-          componentCache[key] = value;
+          this.componentCache[key] = value;
         }
 
       }

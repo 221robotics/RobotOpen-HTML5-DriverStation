@@ -19,7 +19,7 @@ define([
 
       // setup ip address and port
       if (ip == null)
-        instance.ip = "192.168.1.22";
+        instance.ip = "10.0.0.22";
       else
         instance.ip = ip;
 
@@ -231,7 +231,7 @@ define([
 
     RobotLink.prototype.send_joysticks = function() {
       // send joystick data here
-      var bytearray = new Uint8Array(21);
+      var bytearray = new Uint8Array(27);
       bytearray[0] = 99;  // 'c'
       for (var i = 0; i < 24; i++) {
         bytearray[i+1] = instance.joy1[i];
