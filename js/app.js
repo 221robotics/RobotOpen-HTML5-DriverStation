@@ -9,10 +9,9 @@ define([
   'gamepad/joystickhandler',
   'views/charts',
   'backbone',
-  'views/bundle',
   'views/status',
   'views/console'
-], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, BundleView, statView, consoleview){
+], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, statView, consoleview){
   var init = function(){
 
     // disable backbone sync
@@ -37,11 +36,6 @@ define([
     
     // bind statView to robot link
     rolink.setStatModel(statView);
-
-    var bundleView = new BundleView();
-    bundleView.addItem();
-    bundleView.addItem();
-    bundleView.addItem();
     
     function removeAllActive() {
       consoleview.deactivate();

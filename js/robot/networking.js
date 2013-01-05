@@ -23,7 +23,7 @@
         socket.create(socketMode, {}, function(_socketInfo) {
           socketInfo = _socketInfo;
           socket.connect(socketInfo.socketId, address, port, function(connectResult) {
-            console.debug('connectResult', connectResult);
+            //console.debug('connectResult', connectResult);
             connected = (connectResult == 0);
             socket.ondata = function(result) {
               for (var i=0;i<callbacks.length;i++) { 

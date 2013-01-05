@@ -9,7 +9,7 @@ define([
     el: $('#bundles'),
 
     initialize: function(){
-      _.bindAll(this, 'render', 'addItem', 'appendItem', 'clearAll'); // every function that uses 'this' as the current object should be in here
+      _.bindAll(this, 'render', 'updateBundles', 'appendItem', 'clearAll'); // every function that uses 'this' as the current object should be in here
       
       this.collection = new BundleCollection();
       this.collection.bind('add', this.appendItem); // collection event binder
@@ -29,9 +29,24 @@ define([
         this.collection.remove(this.collection.models[0]);
       }
     },
-    addItem: function(){
-      // TODO - create bundle object/model here
-      this.collection.add({ name: "Stupid Encoder", value: 193, type: 'Int', percent: 55});
+    updateBundles: function(bundles){
+      var self = this;
+
+      // if the DS item already exists, update it!
+      _.each(bundles, function(bundle) {
+        var found = false;
+
+        self.collection.find(function(item) {
+          if (item.get('name') === bundle.get('name')) {
+            item.set({value: bundle.get('value'), type: bundle.get('type'), percent: bundle.get('percent')});
+            found = true;
+          }
+        });
+
+        // didn't find it, add it to the collection
+        if (!found)
+          self.collection.add(bundle);
+      });
     },
     appendItem: function(item){
       var itemView = new ItemView({

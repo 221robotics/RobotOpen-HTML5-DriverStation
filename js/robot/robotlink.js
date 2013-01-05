@@ -8,8 +8,9 @@ define([
   'views/console',
   'robot/average',
   'utils',
-  'views/charts'
-], function($, packetparser, consoleview, Average, utils, charts){
+  'views/charts',
+  'views/bundle'
+], function($, packetparser, consoleview, Average, utils, charts, BundleView){
     var instance;
 
     // Start with the constructor
@@ -26,6 +27,8 @@ define([
         instance.port = 22211;
       else
         instance.port = 22211;
+
+      instance.bundleView = new BundleView();
 
       // rolling average to make data less jumpy
       instance.av = new Average(50);
@@ -269,6 +272,7 @@ define([
     };
 
     RobotLink.prototype.socket_on_open = function(link) {
+      instance.bundleView.clearAll();
       instance.statModel.set({connected: true});
       instance.statModel.set({connectionStart: new Date(), connectionEnd: new Date()});
       instance.lastPacket = new Date().getTime();
@@ -305,7 +309,7 @@ define([
             consoleview.log(packetparser.parsePrint(bytearray));
             break;
           case 'd':
-            link.debug('GOT DS PACKET');
+            instance.bundleView.updateBundles(packetparser.parseDS(frame.data));
             break;
           case 's':
             link.debug('GOT STATUS PACKET');
@@ -324,7 +328,7 @@ define([
         }
         myString += bytearray[bytearray.length-1].toString(16);
 
-        link.debug("RX: " + myString);
+        instance.debug("RX: " + myString);
       }
     };
 
