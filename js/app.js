@@ -75,18 +75,24 @@ define([
     }
 
     function enableRobot(e) {
-      rolink.enable();
-    }
-
-    function disableRobot(e) {
-      rolink.disable();
+      if (rolink.is_connected) {
+        if (rolink.enabled) {
+          rolink.disable();
+        } else {
+          rolink.enable();
+        }
+      }
+      
     }
 
     function connectRobot(e) {
-      if (!rolink.is_connected)
+      if (!rolink.is_connected) {
         rolink.connect();
+      }
+      else {
+        rolink.disconnect();
+      }
     }
-
 
     // bind nav links to UI actions
     $("#setup-link").bind('click', showSetup);
@@ -96,10 +102,7 @@ define([
 
     // control buttons
     $("#enable-btn").bind('click', enableRobot);
-    $("#disable-btn").bind('click', disableRobot);
     $("#connect-btn").bind('click', connectRobot);
-
-
   }
 
   return {

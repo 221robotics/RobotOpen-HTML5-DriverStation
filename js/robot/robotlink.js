@@ -9,8 +9,9 @@ define([
   'robot/average',
   'utils',
   'views/charts',
-  'views/bundle'
-], function($, packetparser, consoleview, Average, utils, charts, BundleView){
+  'views/bundle',
+  'views/buttons'
+], function($, packetparser, consoleview, Average, utils, charts, BundleView, buttons){
     var instance;
 
     // Start with the constructor
@@ -43,6 +44,8 @@ define([
       instance.enabled = false;
       // storage for the interval timer to send data to the robot
       instance.tx_timer = null;
+      // kill the connection if we don't receive packets for this long
+      instance.autodrop_timer = null;
       // is the websocket connection to the robot active?
       instance.is_connected = false;
       // debug to console
@@ -175,6 +178,7 @@ define([
     RobotLink.prototype.enable = function() {
       // enable the robot
       if (instance.is_connected) {
+        buttons.enabled();
         instance.enabled = true;
         instance.statModel.set({enabled: true});
       }
@@ -183,6 +187,7 @@ define([
     RobotLink.prototype.disable = function() {
       // disable the robot
       instance.enabled = false;
+      buttons.disabled();
       instance.statModel.set({enabled: false});
     };
 
@@ -272,9 +277,19 @@ define([
     };
 
     RobotLink.prototype.socket_on_open = function(link) {
+      function killConnect() { 
+        var now = new Date().getTime();
+        if (now - instance.lastPacket > 2000) {
+          instance.disconnect(); 
+          clearInterval(instance.autodrop_timer); 
+        }
+      }
+      instance.autodrop_timer = setInterval(killConnect, 1000);
+
       instance.bundleView.clearAll();
       instance.statModel.set({connected: true});
       instance.statModel.set({connectionStart: new Date(), connectionEnd: new Date()});
+      buttons.connected();
       instance.lastPacket = new Date().getTime();
       link.is_connected = true;
       link.debug("Socket opened.");
@@ -285,6 +300,8 @@ define([
     };
 
     RobotLink.prototype.socket_on_message = function(link, frame) {
+      clearTimeout(instance.autodrop_timer);
+
       link.rx_count++;
 
       // average latency
@@ -333,6 +350,7 @@ define([
     };
 
     RobotLink.prototype.disconnect = function() {
+      buttons.disconnected();
       instance.statModel.set({connected: false});
       instance.socket.disconnect();
       instance.disable();
