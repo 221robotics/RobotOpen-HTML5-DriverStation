@@ -237,12 +237,12 @@ define([
 
     // send axis updates
     for (var i=0; i<gamepad.axes.length; i++) {
-      joyHandler.updateComponent(scaleAxis(gamepad.axes[i]), gamepadId, 'a'+i);
+      joyHandler.updateComponent(scaleAxis(gamepad.axes[i]), gamepadId, true, i);
     }
 
     // send button updates
     for (var i=0; i<gamepad.buttons.length; i++) {
-      joyHandler.updateComponent(Math.round(255*gamepad.buttons[i]), gamepadId, 'b'+i);
+      joyHandler.updateComponent(Math.round(255*gamepad.buttons[i]), gamepadId, false, i);
     }
 
   };

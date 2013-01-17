@@ -180,14 +180,9 @@
                 <section id="joystick-section">
                   <div class="row-fluid row-fluid-alternate-bg">
                     <div class="span12">
-
                         <div id="no-gamepad-support" style="display: none;">
-                          Your browser does not seem to support Gamepad API, or it might be we’re not detecting it very well. Sorry!
+                          Your browser does not appear to support Gamepad API.<br />
                         </div>
-                        <div id="no-gamepads-connected" style="display: none;">
-                          No gamepads seem to be connected. Plug in a gamepad and then press any of its buttons to activate it.
-                        </div>
-                        <br />
                         <div class="bs-docs-example">
                           <ul id="myTab" class="nav nav-tabs">
                             <li class="active"><a href="#joy1" data-toggle="tab">Gamepad #1</a></li>
@@ -198,19 +193,63 @@
                           </ul>
                           <div id="myTabContent" class="tab-content">
                             <div class="tab-pane fade in active" id="joy1">
-                              <p>joy1</p>
+                              <table class="table" id="joy1map">
+                                <thead>
+                                  <td>Identifier</td>
+                                  <td>Mapped Button/Axis</td>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td colspan="2">Joystick unmapped. Connect a joystick and press any button to map to this slot.</td>
+                                  </tr>
+                                  <!--<tr>
+                                    <td class="primary">Button X</td>
+                                    <td><a class="btn btn-primary btn-small">Button_3</a></td>
+                                  </tr>-->
+                                </tbody>
+                              </table>
                             </div>
                             <div class="tab-pane fade" id="joy2">
-                              <p>joy2</p>
+                              <table class="table" id="joy2map">
+                                <thead>
+                                  <td>Identifier</td>
+                                  <td>Mapped Button/Axis</td>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td colspan="2">Joystick unmapped. Connect a joystick and press any button to map to this slot.</td>
+                                  </tr>
+                                </tbody>
+                              </table>
                             </div>
                             <div class="tab-pane fade" id="joy3">
-                              <p>joy3</p>
+                              <table class="table" id="joy3map">
+                                <thead>
+                                  <td>Identifier</td>
+                                  <td>Mapped Button/Axis</td>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td colspan="2">Joystick unmapped. Connect a joystick and press any button to map to this slot.</td>
+                                  </tr>
+                                </tbody>
+                              </table>
                             </div>
                             <div class="tab-pane fade" id="joy4">
-                              <p>joy4</p>
+                              <table class="table" id="joy4map">
+                                <thead>
+                                  <td>Identifier</td>
+                                  <td>Mapped Button/Axis</td>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td colspan="2">Joystick unmapped. Connect a joystick and press any button to map to this slot.</td>
+                                  </tr>
+                                </tbody>
+                              </table>
                             </div>
                             <div class="tab-pane fade" id="robot">
-                              <p>robot config</p>
+                              <p>Robot Config</p>
                             </div>
                           </div>
                         </div>

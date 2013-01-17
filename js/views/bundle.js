@@ -42,6 +42,8 @@ define([
           if (item.get('name') === bundle.get('name')) {
             item.set({value: bundle.get('value'), type: bundle.get('type'), percent: bundle.get('percent')});
             found = true;
+            // clean up the intermediary model
+            bundle.destroy();
           }
         });
 

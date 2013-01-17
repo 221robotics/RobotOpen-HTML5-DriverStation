@@ -101,77 +101,112 @@ define([
       instance.statModel = sModel;
     };
 
-    RobotLink.prototype.handleJoyData = function(index, id, value) {
-      // parse out data
-      instance.debug('JOY: '+ index + "--" + id + "--" + value);
+    RobotLink.prototype.handleJoyData = function(index, axis, id, value) {
+      /*
+
+        var joy1 = new ControllerCollection();
+
+        joy1.create({alias: 'Left Stick Horizontal', axis: true, index: 0, joyevent: 'stick-left-axis-x'});
+        joy1.create({alias: 'Left Stick Vertical', axis: true, index: 1, joyevent: 'stick-left-axis-y'});
+        joy1.create({alias: 'Right Stick Horizontal', axis: true, index: 2, joyevent: 'stick-right-axis-x'});
+        joy1.create({alias: 'Right Stick Vertical', axis: true, index: 3, joyevent: 'stick-right-axis-y'});
+
+        joy1.create({alias: 'A Button', axis: false, index: 0, joyevent: 'button-a'});
+        joy1.create({alias: 'B Button', axis: false, index: 1, joyevent: 'button-b'});
+        joy1.create({alias: 'X Button', axis: false, index: 2, joyevent: 'button-x'});
+        joy1.create({alias: 'Y Button', axis: false, index: 3, joyevent: 'button-y'});
+        joy1.create({alias: 'Left Shoulder', axis: false, index: 4, joyevent: 'button-left-shoulder'});
+        joy1.create({alias: 'Right Shoulder', axis: false, index: 5, joyevent: 'button-right-shoulder'});
+        joy1.create({alias: 'Left Trigger', axis: false, index: 6, joyevent: 'button-left-trigger'});
+        joy1.create({alias: 'Right Trigger', axis: false, index: 7, joyevent: 'button-right-trigger'});
+        joy1.create({alias: 'Select', axis: false, index: 8, joyevent: 'button-select'});
+        joy1.create({alias: 'Start', axis: false, index: 9, joyevent: 'button-start'});
+        joy1.create({alias: 'Left Stick Button', axis: false, index: 10, joyevent: 'button-left-stick'});
+        joy1.create({alias: 'Right Stick Button', axis: false, index: 11, joyevent: 'button-right-stick'});
+        joy1.create({alias: 'D-Pad Up', axis: false, index: 12, joyevent: 'button-dpad-up'});
+        joy1.create({alias: 'D-Pad Down', axis: false, index: 13, joyevent: 'button-dpad-down'});
+        joy1.create({alias: 'D-Pad Left', axis: false, index: 14, joyevent: 'button-dpad-left'});
+        joy1.create({alias: 'D-Pad Right', axis: false, index: 15, joyevent: 'button-dpad-right'});
+        joy1.create({alias: 'Aux One', axis: false, index: 16, joyevent: 'aux1'});
+        joy1.create({alias: 'Aux Two', axis: false, index: 17, joyevent: 'aux2'});
+        joy1.create({alias: 'Aux Three', axis: false, index: 18, joyevent: 'aux3'});
+        joy1.create({alias: 'Aux Four', axis: false, index: 19, joyevent: 'aux4'});
+
+      */
 
       // TODO: handle gamepad mapping here
       if (index == 0) {
-        if (id == 'a0') {
-          instance.joy1[0] = value;
+        if (axis) {
+          if (id == 0) {
+            instance.joy1[0] = value;
+          }
+          else if (id == 1) {
+            instance.joy1[1] = 255 - value;
+          }
+          else if (id == 2) {
+            instance.joy1[2] = value;
+          }
+          else if (id == 3) {
+            instance.joy1[3] = 255 - value;
+          }
+        } else {
+          if (id == 0) {
+            instance.joy1[4] = value;
+          }
+          else if (id == 1) {
+            instance.joy1[5] = value;
+          }
+          else if (id == 2) {
+            instance.joy1[6] = value;
+          }
+          else if (id == 3) {
+            instance.joy1[7] = value;
+          }
+          else if (id == 4) {
+            instance.joy1[8] = value;
+          }
+          else if (id == 5) {
+            instance.joy1[9] = value;
+          }
+          else if (id == 6) {
+            instance.joy1[10] = value;
+          }
+          else if (id == 7) {
+            instance.joy1[11] = value;
+          }
+          else if (id == 8) {
+            instance.joy1[12] = value;
+          }
+          else if (id == 9) {
+            instance.joy1[13] = value;
+          }
+          else if (id == 10) {
+            instance.joy1[14] = value;
+          }
+          else if (id == 11) {
+            instance.joy1[15] = value;
+          }
+          else if (id == 12) {
+            instance.joy1[16] = value;
+          }
+          else if (id == 13) {
+            instance.joy1[17] = value;
+          }
+          else if (id == 14) {
+            instance.joy1[18] = value;
+          }
+          else if (id == 15) {
+            instance.joy1[19] = value;
+          }
         }
-        else if (id == 'a1') {
-          instance.joy1[1] = 255 - value;
-        }
-        else if (id == 'a2') {
-          instance.joy1[2] = value;
-        }
-        else if (id == 'a3') {
-          instance.joy1[3] = 255 - value;
-        }
-        else if (id == 'b0') {
-          instance.joy1[4] = value;
-        }
-        else if (id == 'b1') {
-          instance.joy1[5] = value;
-        }
-        else if (id == 'b2') {
-          instance.joy1[6] = value;
-        }
-        else if (id == 'b3') {
-          instance.joy1[7] = value;
-        }
-        else if (id == 'b4') {
-          instance.joy1[8] = value;
-        }
-        else if (id == 'b5') {
-          instance.joy1[9] = value;
-        }
-        else if (id == 'b6') {
-          instance.joy1[10] = value;
-        }
-        else if (id == 'b7') {
-          instance.joy1[11] = value;
-        }
-        else if (id == 'b8') {
-          instance.joy1[12] = value;
-        }
-        else if (id == 'b9') {
-          instance.joy1[13] = value;
-        }
-        else if (id == 'b10') {
-          instance.joy1[14] = value;
-        }
-        else if (id == 'b11') {
-          instance.joy1[15] = value;
-        }
-        else if (id == 'b12') {
-          instance.joy1[16] = value;
-        }
-        else if (id == 'b13') {
-          instance.joy1[17] = value;
-        }
-        else if (id == 'b14') {
-          instance.joy1[18] = value;
-        }
-        else if (id == 'b15') {
-          instance.joy1[19] = value;
-        }
-          
       }
 
-      if (id.indexOf('num-gamepads') != -1) {
-        instance.joy_count = value;
+      try {
+        if (id.indexOf('num-gamepads') != -1) {
+          instance.joy_count = value;
+        }
+      } catch (err) {
+        // ignore
       }
     };
 
@@ -285,13 +320,12 @@ define([
         }
       }
       instance.autodrop_timer = setInterval(killConnect, 1000);
-
+      link.is_connected = true;
       instance.bundleView.clearAll();
-      instance.statModel.set({connected: true});
+      instance.statModel.set({connecting: true});
       instance.statModel.set({connectionStart: new Date(), connectionEnd: new Date()});
       buttons.connected();
       instance.lastPacket = new Date().getTime();
-      link.is_connected = true;
       link.debug("Socket opened.");
 
       // setup the timer to keep data supplied to the robot
@@ -315,7 +349,7 @@ define([
       }
       
       instance.lastPacket = now;
-      instance.statModel.set({packetRx: instance.rx_count, averageLatency: instance.av.getAverage()});
+      instance.statModel.set({packetRx: instance.rx_count, averageLatency: instance.av.getAverage(), connected: true, connecting: false});
 
       if (frame.data instanceof ArrayBuffer) {
         var bytearray = new Uint8Array(frame.data);
@@ -351,7 +385,7 @@ define([
 
     RobotLink.prototype.disconnect = function() {
       buttons.disconnected();
-      instance.statModel.set({connected: false});
+      instance.statModel.set({connected: false, connecting: false});
       instance.socket.disconnect();
       instance.disable();
       instance.socket = null;

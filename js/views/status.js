@@ -31,7 +31,9 @@ define([
       // chrome app restrictions blow so we have to define our template inline
       var statTemplate = '<div class="span2"><div class="kpi">';
 
-        if (this.model.get('connected'))
+        if (this.model.get('connecting'))
+          statTemplate += 'trying';
+        else if (this.model.get('connected'))
           statTemplate += 'engaged';
         else
           statTemplate += 'no link';

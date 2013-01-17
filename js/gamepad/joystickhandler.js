@@ -56,7 +56,7 @@ define([
             }
           }
           for (var i=0;i<this.callbacks.length;i++) { 
-            this.callbacks[i](-1, 'num-gamepads', gamepads.length);
+            this.callbacks[i](-1, false, 'num-gamepads', gamepads.length);
           }
         }
         else {
@@ -64,32 +64,28 @@ define([
         }
 
         if (!padsConnected) {
-          $("#no-gamepads-connected").show();
           for (var i=0;i<this.callbacks.length;i++) { 
-            this.callbacks[i](-1, 'num-gamepads', 0);
+            this.callbacks[i](-1, false, 'num-gamepads', 0);
           }
-        }
-      },
-
-      updateCallbacks: function(index, id, value) {
-        for (var i=0;i<this.callbacks.length;i++) { 
-          this.callbacks[i](index, id, value);
         }
       },
 
       /**
        * Update a given button on the screen.
        */
-      updateComponent: function(value, gamepadId, id) {
+      updateComponent: function(value, gamepadId, axis, id) {
 
         // generate a key to identify the gamepad index and component ID
-        var key = gamepadId + ':' + id;
+        if (axis)
+          var key = gamepadId + ':a:' + id;
+        else
+          var key = gamepadId + ':b:' + id;
 
         // check if this value has changed since the last update
         if (this.componentCache[key] != value) {
           // Send update to all subscribers
           for (var i=0;i<this.callbacks.length;i++) {
-            this.callbacks[i](gamepadId, id, value);
+            this.callbacks[i](gamepadId, axis, id, value);
           }
 
           // the component did change, cache it

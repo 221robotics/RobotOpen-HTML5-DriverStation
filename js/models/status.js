@@ -5,6 +5,7 @@ define([
   var StatusModel = Backbone.Model.extend({
     defaults: {
       connected: false,
+      connecting: false,
       enabled: false,
       connectionStart: new Date(),
       connectionEnd: new Date(),
