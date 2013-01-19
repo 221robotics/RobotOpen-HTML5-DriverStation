@@ -62,6 +62,7 @@ define([
       // how we update the status model
       instance.statModel = null;
 
+      // create the array to hold all of the joystick values
       instance.joy1 = new Array(
         127,  // Analog Left X Axis
         127,  // Analog Left Y Axis
@@ -88,6 +89,12 @@ define([
         0,    // Aux
         0     // Aux
       );
+
+      // copy joy1 array to other joystick arrays
+      instance.joy2 = instance.joy1.slice(0);
+      instance.joy3 = instance.joy1.slice(0);
+      instance.joy4 = instance.joy1.slice(0);
+
     };
 
     RobotLink.prototype.debug = function(msg) {
@@ -101,112 +108,19 @@ define([
       instance.statModel = sModel;
     };
 
-    RobotLink.prototype.handleJoyData = function(index, axis, id, value) {
-      /*
+    RobotLink.prototype.handleJoyCountChange = function(numJoys) {
+      instance.joy_count = numJoys;
+    };
 
-        var joy1 = new ControllerCollection();
-
-        joy1.create({alias: 'Left Stick Horizontal', axis: true, index: 0, joyevent: 'stick-left-axis-x'});
-        joy1.create({alias: 'Left Stick Vertical', axis: true, index: 1, joyevent: 'stick-left-axis-y'});
-        joy1.create({alias: 'Right Stick Horizontal', axis: true, index: 2, joyevent: 'stick-right-axis-x'});
-        joy1.create({alias: 'Right Stick Vertical', axis: true, index: 3, joyevent: 'stick-right-axis-y'});
-
-        joy1.create({alias: 'A Button', axis: false, index: 0, joyevent: 'button-a'});
-        joy1.create({alias: 'B Button', axis: false, index: 1, joyevent: 'button-b'});
-        joy1.create({alias: 'X Button', axis: false, index: 2, joyevent: 'button-x'});
-        joy1.create({alias: 'Y Button', axis: false, index: 3, joyevent: 'button-y'});
-        joy1.create({alias: 'Left Shoulder', axis: false, index: 4, joyevent: 'button-left-shoulder'});
-        joy1.create({alias: 'Right Shoulder', axis: false, index: 5, joyevent: 'button-right-shoulder'});
-        joy1.create({alias: 'Left Trigger', axis: false, index: 6, joyevent: 'button-left-trigger'});
-        joy1.create({alias: 'Right Trigger', axis: false, index: 7, joyevent: 'button-right-trigger'});
-        joy1.create({alias: 'Select', axis: false, index: 8, joyevent: 'button-select'});
-        joy1.create({alias: 'Start', axis: false, index: 9, joyevent: 'button-start'});
-        joy1.create({alias: 'Left Stick Button', axis: false, index: 10, joyevent: 'button-left-stick'});
-        joy1.create({alias: 'Right Stick Button', axis: false, index: 11, joyevent: 'button-right-stick'});
-        joy1.create({alias: 'D-Pad Up', axis: false, index: 12, joyevent: 'button-dpad-up'});
-        joy1.create({alias: 'D-Pad Down', axis: false, index: 13, joyevent: 'button-dpad-down'});
-        joy1.create({alias: 'D-Pad Left', axis: false, index: 14, joyevent: 'button-dpad-left'});
-        joy1.create({alias: 'D-Pad Right', axis: false, index: 15, joyevent: 'button-dpad-right'});
-        joy1.create({alias: 'Aux One', axis: false, index: 16, joyevent: 'aux1'});
-        joy1.create({alias: 'Aux Two', axis: false, index: 17, joyevent: 'aux2'});
-        joy1.create({alias: 'Aux Three', axis: false, index: 18, joyevent: 'aux3'});
-        joy1.create({alias: 'Aux Four', axis: false, index: 19, joyevent: 'aux4'});
-
-      */
-
-      // TODO: handle gamepad mapping here
+    RobotLink.prototype.handleJoyData = function(index, id, value) {
       if (index == 0) {
-        if (axis) {
-          if (id == 0) {
-            instance.joy1[0] = value;
-          }
-          else if (id == 1) {
-            instance.joy1[1] = 255 - value;
-          }
-          else if (id == 2) {
-            instance.joy1[2] = value;
-          }
-          else if (id == 3) {
-            instance.joy1[3] = 255 - value;
-          }
-        } else {
-          if (id == 0) {
-            instance.joy1[4] = value;
-          }
-          else if (id == 1) {
-            instance.joy1[5] = value;
-          }
-          else if (id == 2) {
-            instance.joy1[6] = value;
-          }
-          else if (id == 3) {
-            instance.joy1[7] = value;
-          }
-          else if (id == 4) {
-            instance.joy1[8] = value;
-          }
-          else if (id == 5) {
-            instance.joy1[9] = value;
-          }
-          else if (id == 6) {
-            instance.joy1[10] = value;
-          }
-          else if (id == 7) {
-            instance.joy1[11] = value;
-          }
-          else if (id == 8) {
-            instance.joy1[12] = value;
-          }
-          else if (id == 9) {
-            instance.joy1[13] = value;
-          }
-          else if (id == 10) {
-            instance.joy1[14] = value;
-          }
-          else if (id == 11) {
-            instance.joy1[15] = value;
-          }
-          else if (id == 12) {
-            instance.joy1[16] = value;
-          }
-          else if (id == 13) {
-            instance.joy1[17] = value;
-          }
-          else if (id == 14) {
-            instance.joy1[18] = value;
-          }
-          else if (id == 15) {
-            instance.joy1[19] = value;
-          }
-        }
-      }
-
-      try {
-        if (id.indexOf('num-gamepads') != -1) {
-          instance.joy_count = value;
-        }
-      } catch (err) {
-        // ignore
+        instance.joy1[id] = value;
+      } else if (index == 1) {
+        instance.joy2[id] = value;
+      } else if (index == 2) {
+        instance.joy3[id] = value;
+      } else if (index == 3) {
+        instance.joy4[id] = value;
       }
     };
 
@@ -271,15 +185,34 @@ define([
 
     RobotLink.prototype.send_joysticks = function() {
       // send joystick data here
-      var bytearray = new Uint8Array(27);
+      var bytearray = new Uint8Array(3+(instance.joy_count*24));
       bytearray[0] = 99;  // 'c'
-      for (var i = 0; i < 24; i++) {
-        bytearray[i+1] = instance.joy1[i];
-      }
-      var crcDec = utils.crc16(bytearray, 25);
 
-      bytearray[25] = (crcDec >> 8) & 0xFF;
-      bytearray[26] = crcDec & 0xFF;
+      // load joystick data into byte array
+      if (instance.joy_count >= 1) {
+        for (var i = 0; i < 24; i++) {
+          bytearray[i+1] = instance.joy1[i];
+        }
+      } else if (instance.joy_count >= 2) {
+        for (var i = 0; i < 24; i++) {
+          bytearray[i+25] = instance.joy2[i];
+        }
+      } else if (instance.joy_count >= 3) {
+        for (var i = 0; i < 24; i++) {
+          bytearray[i+49] = instance.joy3[i];
+        }
+      } else if (instance.joy_count >= 4) {
+        for (var i = 0; i < 24; i++) {
+          bytearray[i+73] = instance.joy4[i];
+        }
+      }
+
+      // calculate crc-16
+      var crcDec = utils.crc16(bytearray, 1+(instance.joy_count*24));
+
+      // insert crc-16 into byte array
+      bytearray[1+(instance.joy_count*24)] = (crcDec >> 8) & 0xFF;
+      bytearray[2+(instance.joy_count*24)] = crcDec & 0xFF;
 
       instance.xmit(bytearray.buffer);
     };

@@ -1,7 +1,7 @@
 define([
   'underscore',
   'backbone',
-  'models/bundle'
+  'models/bundle',
   'models/controllerbutton'
 ], function(_, Backbone, ControllerButtonModel){
   var ControllerCollection = Backbone.Collection.extend({

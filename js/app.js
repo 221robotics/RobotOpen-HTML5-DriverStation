@@ -19,14 +19,12 @@ define([
       success();
     }
 
-    // setup connection
-    joystickHandler.init();
-
     // create new robot link object
     var rolink = new RobotLink();
 
     // bind joystick handler to rolink
-    joystickHandler.subscribe(rolink.handleJoyData);
+    joystickHandler.subscribe(rolink);
+    joystickHandler.init();
 
     // init gamepad library
     gamepad.init(joystickHandler);
@@ -103,6 +101,10 @@ define([
     // control buttons
     $("#enable-btn").bind('click', enableRobot);
     $("#connect-btn").bind('click', connectRobot);
+
+    $(function () {
+        $("[rel='tooltip']").tooltip();
+    });
   }
 
   return {

@@ -40,3 +40,9 @@ body {
 	overflow-x:hidden;
 	overflow-y:auto;
 }
+
+#joy-hovers {
+	float: left;
+	margin-top: 20px;
+	margin-left: 135px;
+}
