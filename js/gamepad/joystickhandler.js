@@ -49,31 +49,31 @@ define([
 
           var joy1 = new ControllerCollection();
 
-          joy1.create({alias: 'Left Stick Horizontal', axis: true, index: 0, joyevent: 'stick-left-axis-x'});
-          joy1.create({alias: 'Left Stick Vertical', axis: true, index: 1, joyevent: 'stick-left-axis-y'});
-          joy1.create({alias: 'Right Stick Horizontal', axis: true, index: 2, joyevent: 'stick-right-axis-x'});
-          joy1.create({alias: 'Right Stick Vertical', axis: true, index: 3, joyevent: 'stick-right-axis-y'});
+          joy1.create({alias: 'Left Stick Horizontal', axis: true, gamepad-index: 0, bundle-index: 0});
+          joy1.create({alias: 'Left Stick Vertical', axis: true, gamepad-index: 1, bundle-index: 1});
+          joy1.create({alias: 'Right Stick Horizontal', axis: true, gamepad-index: 2, bundle-index: 2});
+          joy1.create({alias: 'Right Stick Vertical', axis: true, gamepad-index: 3, bundle-index: 3});
 
-          joy1.create({alias: 'A Button', axis: false, index: 0, joyevent: 'button-a'});
-          joy1.create({alias: 'B Button', axis: false, index: 1, joyevent: 'button-b'});
-          joy1.create({alias: 'X Button', axis: false, index: 2, joyevent: 'button-x'});
-          joy1.create({alias: 'Y Button', axis: false, index: 3, joyevent: 'button-y'});
-          joy1.create({alias: 'Left Shoulder', axis: false, index: 4, joyevent: 'button-left-shoulder'});
-          joy1.create({alias: 'Right Shoulder', axis: false, index: 5, joyevent: 'button-right-shoulder'});
-          joy1.create({alias: 'Left Trigger', axis: false, index: 6, joyevent: 'button-left-trigger'});
-          joy1.create({alias: 'Right Trigger', axis: false, index: 7, joyevent: 'button-right-trigger'});
-          joy1.create({alias: 'Select', axis: false, index: 8, joyevent: 'button-select'});
-          joy1.create({alias: 'Start', axis: false, index: 9, joyevent: 'button-start'});
-          joy1.create({alias: 'Left Stick Button', axis: false, index: 10, joyevent: 'button-left-stick'});
-          joy1.create({alias: 'Right Stick Button', axis: false, index: 11, joyevent: 'button-right-stick'});
-          joy1.create({alias: 'D-Pad Up', axis: false, index: 12, joyevent: 'button-dpad-up'});
-          joy1.create({alias: 'D-Pad Down', axis: false, index: 13, joyevent: 'button-dpad-down'});
-          joy1.create({alias: 'D-Pad Left', axis: false, index: 14, joyevent: 'button-dpad-left'});
-          joy1.create({alias: 'D-Pad Right', axis: false, index: 15, joyevent: 'button-dpad-right'});
-          joy1.create({alias: 'Aux One', axis: false, index: 16, joyevent: 'aux1'});
-          joy1.create({alias: 'Aux Two', axis: false, index: 17, joyevent: 'aux2'});
-          joy1.create({alias: 'Aux Three', axis: false, index: 18, joyevent: 'aux3'});
-          joy1.create({alias: 'Aux Four', axis: false, index: 19, joyevent: 'aux4'});
+          joy1.create({alias: 'A Button', axis: false, gamepad-index: 0, bundle-index: 4});
+          joy1.create({alias: 'B Button', axis: false, gamepad-index: 1, bundle-index: 5});
+          joy1.create({alias: 'X Button', axis: false, gamepad-index: 2, bundle-index: 6});
+          joy1.create({alias: 'Y Button', axis: false, gamepad-index: 3, bundle-index: 7});
+          joy1.create({alias: 'Left Shoulder', axis: false, gamepad-index: 4, bundle-index: 8});
+          joy1.create({alias: 'Right Shoulder', axis: false, gamepad-index: 5, bundle-index: 9});
+          joy1.create({alias: 'Left Trigger', axis: false, gamepad-index: 6, bundle-index: 10});
+          joy1.create({alias: 'Right Trigger', axis: false, gamepad-index: 7, bundle-index: 11});
+          joy1.create({alias: 'Select', axis: false, gamepad-index: 8, bundle-index: 12});
+          joy1.create({alias: 'Start', axis: false, gamepad-index: 9, bundle-index: 13});
+          joy1.create({alias: 'Left Stick Button', axis: false, gamepad-index: 10, bundle-index: 14});
+          joy1.create({alias: 'Right Stick Button', axis: false, gamepad-index: 11, bundle-index: 15});
+          joy1.create({alias: 'D-Pad Up', axis: false, gamepad-index: 12, bundle-index: 16});
+          joy1.create({alias: 'D-Pad Down', axis: false, gamepad-index: 13, bundle-index: 17});
+          joy1.create({alias: 'D-Pad Left', axis: false, gamepad-index: 14, bundle-index: 18});
+          joy1.create({alias: 'D-Pad Right', axis: false, gamepad-index: 15, bundle-index: 19});
+          joy1.create({alias: 'Aux One', axis: false, gamepad-index: 16, bundle-index: 20});
+          joy1.create({alias: 'Aux Two', axis: false, gamepad-index: 17, bundle-index: 21});
+          joy1.create({alias: 'Aux Three', axis: false, gamepad-index: 18, bundle-index: 22});
+          joy1.create({alias: 'Aux Four', axis: false, gamepad-index: 19, bundle-index: 23});
 
         */
 
