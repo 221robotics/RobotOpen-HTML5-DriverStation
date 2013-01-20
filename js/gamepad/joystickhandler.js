@@ -95,19 +95,16 @@ define([
               } else if (this.joy2_controller == null) {
                 this.joy2_controller = new ControllerCollection();
                 initializeController(this.joy2_controller);
-                unmappedJoys.splice(0, 1);
                 this.unique_joy_mapping[gamepads[i].index] = 2;
               } else if (this.joy3_controller == null) {
                 this.joy3_controller = new ControllerCollection();
                 initializeController(this.joy3_controller);
-                unmappedJoys.splice(0, 1);
                 this.unique_joy_mapping[gamepads[i].index] = 3;
               } else if (this.joy4_controller == null) {
                 this.joy4_controller = new ControllerCollection();
                 initializeController(this.joy4_controller);
-                unmappedJoys.splice(0, 1);
                 this.unique_joy_mapping[gamepads[i].index] = 4;
-              }
+              } // else we're all filled up, ignore for now
             }
           }
 
