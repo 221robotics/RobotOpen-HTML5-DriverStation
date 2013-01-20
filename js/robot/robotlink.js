@@ -112,6 +112,38 @@ define([
       instance.joy_count = numJoys;
     };
 
+    RobotLink.prototype.resetJoy = function(joyIndex) {
+      if (joyIndex == 1) {
+        for (var i=0; i<=3; i++) {
+          instance.joy1[i] = 127;
+        }
+        for (var i=4; i<=23; i++) {
+          instance.joy1[i] = 0;
+        }
+      } else if (joyIndex == 2) {
+        for (var i=0; i<=3; i++) {
+          instance.joy2[i] = 127;
+        }
+        for (var i=4; i<=23; i++) {
+          instance.joy2[i] = 0;
+        }
+      } else if (joyIndex == 3) {
+        for (var i=0; i<=3; i++) {
+          instance.joy3[i] = 127;
+        }
+        for (var i=4; i<=23; i++) {
+          instance.joy3[i] = 0;
+        }
+      } else if (joyIndex == 4) {
+        for (var i=0; i<=3; i++) {
+          instance.joy4[i] = 127;
+        }
+        for (var i=4; i<=23; i++) {
+          instance.joy4[i] = 0;
+        }
+      }
+    };
+
     RobotLink.prototype.handleJoyData = function(index, id, value) {
       if (index == 0) {
         instance.joy1[id] = value;
@@ -185,34 +217,29 @@ define([
 
     RobotLink.prototype.send_joysticks = function() {
       // send joystick data here
-      var bytearray = new Uint8Array(3+(instance.joy_count*24));
+      var bytearray = new Uint8Array(99);
       bytearray[0] = 99;  // 'c'
 
       // load joystick data into byte array
-      if (instance.joy_count >= 1) {
-        for (var i = 0; i < 24; i++) {
-          bytearray[i+1] = instance.joy1[i];
-        }
-      } else if (instance.joy_count >= 2) {
-        for (var i = 0; i < 24; i++) {
-          bytearray[i+25] = instance.joy2[i];
-        }
-      } else if (instance.joy_count >= 3) {
-        for (var i = 0; i < 24; i++) {
-          bytearray[i+49] = instance.joy3[i];
-        }
-      } else if (instance.joy_count >= 4) {
-        for (var i = 0; i < 24; i++) {
-          bytearray[i+73] = instance.joy4[i];
-        }
+      for (var i = 0; i < 24; i++) {
+        bytearray[i+1] = instance.joy1[i];
+      }
+      for (var i = 0; i < 24; i++) {
+        bytearray[i+25] = instance.joy2[i];
+      }
+      for (var i = 0; i < 24; i++) {
+        bytearray[i+49] = instance.joy3[i];
+      }
+      for (var i = 0; i < 24; i++) {
+        bytearray[i+73] = instance.joy4[i];
       }
 
       // calculate crc-16
-      var crcDec = utils.crc16(bytearray, 1+(instance.joy_count*24));
+      var crcDec = utils.crc16(bytearray, 97);
 
       // insert crc-16 into byte array
-      bytearray[1+(instance.joy_count*24)] = (crcDec >> 8) & 0xFF;
-      bytearray[2+(instance.joy_count*24)] = crcDec & 0xFF;
+      bytearray[97] = (crcDec >> 8) & 0xFF;
+      bytearray[98] = crcDec & 0xFF;
 
       instance.xmit(bytearray.buffer);
     };

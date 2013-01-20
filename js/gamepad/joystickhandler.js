@@ -3,8 +3,6 @@ define([
   'collections/controller'
 ], function($, ControllerCollection){
   return {
-      numJoysticks: 0,
-
       callbacks: [],
 
       init: function() {
@@ -14,21 +12,12 @@ define([
       // print debug statements to console
       debugging: false,
 
-      joy1_mapped: false,
-      joy2_mapped: false,
-      joy3_mapped: false,
-      joy4_mapped: false,
-
       joy1_controller: null,
       joy2_controller: null,
       joy3_controller: null,
       joy4_controller: null,
 
-      // store the unique identifier of the joystick
-      joy1_id: null,
-      joy2_id: null,
-      joy3_id: null,
-      joy4_id: null,
+      unique_joy_mapping: {},
 
       // keep track of components that change (lookup)
       componentCache: {},
@@ -85,45 +74,80 @@ define([
        * template.
        */
       updateGamepads: function(gamepads) {
-
-        // update number of connected joysticks
+        // make sure we actually received gamepads
         if (gamepads) {
-          this.numJoysticks = gamepads.length;
-
-          if (this.numJoysticks > 0 && !joy1_mapped) {
-            joy1_controller = new ControllerCollection();
-            joy1_mapped = true;
-            joy1_id = gamepads[0].id;
-            initializeController(joy1_controller);
-          }
-          if (this.numJoysticks > 1 && !joy2_mapped) {
-            joy2_controller = new ControllerCollection();
-            joy2_mapped = true;
-            joy2_id = gamepads[1].id;
-            initializeController(joy2_controller);
-          }
-          if (this.numJoysticks > 2 && !joy3_mapped) {
-            joy3_controller = new ControllerCollection();
-            joy3_mapped = true;
-            joy3_id = gamepads[2].id;
-            initializeController(joy3_controller);
-          }
-          if (this.numJoysticks > 3 && !joy4_mapped) {
-            joy4_controller = new ControllerCollection();
-            joy4_mapped = true;
-            joy4_id = gamepads[3].id;
-            initializeController(joy4_controller);
+          // keep track of all joysticks currently mapped so we know if anything has been removed
+          var remainingJoys = [];
+          for (var key in this.unique_joy_mapping) {
+            remainingJoys.push(key);
           }
 
-          // TODO: handle disconnects
+          for (var i=0; i<gamepads.length; i++) {
+            if (gamepads[i].index in this.unique_joy_mapping) {
+              // we've seen this gamepad before
+              remainingJoys.splice(remainingJoys.indexOf(gamepads[i].index), 1);
+            } else {
+              // new gamepad!!
+              if (this.joy1_controller == null) {
+                this.joy1_controller = new ControllerCollection();
+                initializeController(this.joy1_controller);
+                this.unique_joy_mapping[gamepads[i].index] = 1;
+              } else if (this.joy2_controller == null) {
+                this.joy2_controller = new ControllerCollection();
+                initializeController(this.joy2_controller);
+                unmappedJoys.splice(0, 1);
+                this.unique_joy_mapping[gamepads[i].index] = 2;
+              } else if (this.joy3_controller == null) {
+                this.joy3_controller = new ControllerCollection();
+                initializeController(this.joy3_controller);
+                unmappedJoys.splice(0, 1);
+                this.unique_joy_mapping[gamepads[i].index] = 3;
+              } else if (this.joy4_controller == null) {
+                this.joy4_controller = new ControllerCollection();
+                initializeController(this.joy4_controller);
+                unmappedJoys.splice(0, 1);
+                this.unique_joy_mapping[gamepads[i].index] = 4;
+              }
+            }
+          }
 
+          // check to see if any joysticks have been removed
+          for (var i=0; i<remainingJoys.length; i++) {
+            // anything in here has just been disconnected!
+            if (this.unique_joy_mapping[remainingJoys[i]] == 1) {
+              // joystick 1 has been disconnected
+              this.joy1_controller.reset();
+              this.joy1_controller = null;
+              for (var i=0;i<this.callbacks.length;i++) { 
+                this.callbacks[i].resetJoy(1);
+              }
+            } else if (this.unique_joy_mapping[remainingJoys[i]] == 2) {
+              // joystick 2 has been disconnected
+              this.joy2_controller.reset();
+              this.joy2_controller = null;
+              for (var i=0;i<this.callbacks.length;i++) { 
+                this.callbacks[i].resetJoy(2);
+              }
+            } else if (this.unique_joy_mapping[remainingJoys[i]] == 3) {
+              // joystick 3 has been disconnected
+              this.joy3_controller.reset();
+              this.joy3_controller = null;
+              for (var i=0;i<this.callbacks.length;i++) { 
+                this.callbacks[i].resetJoy(3);
+              }
+            } else if (this.unique_joy_mapping[remainingJoys[i]] == 4) {
+              // joystick 4 has been disconnected
+              this.joy4_controller.reset();
+              this.joy4_controller = null;
+              for (var i=0;i<this.callbacks.length;i++) { 
+                this.callbacks[i].resetJoy(4);
+              }
+            }
+          }
+
+          // let our callbacks know how many joysticks are connected
           for (var i=0;i<this.callbacks.length;i++) { 
             this.callbacks[i].handleJoyCountChange(gamepads.length);
-          }
-        } else {
-          this.numJoysticks = 0;
-          for (var i=0;i<this.callbacks.length;i++) { 
-            this.callbacks[i].handleJoyCountChange(0);
           }
         }
 
