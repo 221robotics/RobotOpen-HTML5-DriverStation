@@ -41,32 +41,32 @@ define([
 
       initializeController: function(joyController) {
         // default axis controls
-        joyController.create({alias: 'Left Stick Horizontal', axis: true, gamepadIndex: 0, bundleIndex: 0});
-        joyController.create({alias: 'Left Stick Vertical', axis: true, gamepadIndex: 1, bundleIndex: 1});
-        joyController.create({alias: 'Right Stick Horizontal', axis: true, gamepadIndex: 2, bundleIndex: 2});
-        joyController.create({alias: 'Right Stick Vertical', axis: true, gamepadIndex: 3, bundleIndex: 3});
+        joyController.add({alias: 'Left Stick Horizontal', axis: true, gamepadIndex: 0, bundleIndex: 0});
+        joyController.add({alias: 'Left Stick Vertical', axis: true, gamepadIndex: 1, bundleIndex: 1});
+        joyController.add({alias: 'Right Stick Horizontal', axis: true, gamepadIndex: 2, bundleIndex: 2});
+        joyController.add({alias: 'Right Stick Vertical', axis: true, gamepadIndex: 3, bundleIndex: 3});
 
         // default button controls
-        joyController.create({alias: 'A Button', axis: false, gamepadIndex: 0, bundleIndex: 4});
-        joyController.create({alias: 'B Button', axis: false, gamepadIndex: 1, bundleIndex: 5});
-        joyController.create({alias: 'X Button', axis: false, gamepadIndex: 2, bundleIndex: 6});
-        joyController.create({alias: 'Y Button', axis: false, gamepadIndex: 3, bundleIndex: 7});
-        joyController.create({alias: 'Left Shoulder', axis: false, gamepadIndex: 4, bundleIndex: 8});
-        joyController.create({alias: 'Right Shoulder', axis: false, gamepadIndex: 5, bundleIndex: 9});
-        joyController.create({alias: 'Left Trigger', axis: false, gamepadIndex: 6, bundleIndex: 10});
-        joyController.create({alias: 'Right Trigger', axis: false, gamepadIndex: 7, bundleIndex: 11});
-        joyController.create({alias: 'Select', axis: false, gamepadIndex: 8, bundleIndex: 12});
-        joyController.create({alias: 'Start', axis: false, gamepadIndex: 9, bundleIndex: 13});
-        joyController.create({alias: 'Left Stick Button', axis: false, gamepadIndex: 10, bundleIndex: 14});
-        joyController.create({alias: 'Right Stick Button', axis: false, gamepadIndex: 11, bundleIndex: 15});
-        joyController.create({alias: 'D-Pad Up', axis: false, gamepadIndex: 12, bundleIndex: 16});
-        joyController.create({alias: 'D-Pad Down', axis: false, gamepadIndex: 13, bundleIndex: 17});
-        joyController.create({alias: 'D-Pad Left', axis: false, gamepadIndex: 14, bundleIndex: 18});
-        joyController.create({alias: 'D-Pad Right', axis: false, gamepadIndex: 15, bundleIndex: 19});
-        joyController.create({alias: 'Aux One', axis: false, gamepadIndex: 16, bundleIndex: 20});
-        joyController.create({alias: 'Aux Two', axis: false, gamepadIndex: 17, bundleIndex: 21});
-        joyController.create({alias: 'Aux Three', axis: false, gamepadIndex: 18, bundleIndex: 22});
-        joyController.create({alias: 'Aux Four', axis: false, gamepadIndex: 19, bundleIndex: 23});
+        joyController.add({alias: 'A Button', axis: false, gamepadIndex: 0, bundleIndex: 4});
+        joyController.add({alias: 'B Button', axis: false, gamepadIndex: 1, bundleIndex: 5});
+        joyController.add({alias: 'X Button', axis: false, gamepadIndex: 2, bundleIndex: 6});
+        joyController.add({alias: 'Y Button', axis: false, gamepadIndex: 3, bundleIndex: 7});
+        joyController.add({alias: 'Left Shoulder', axis: false, gamepadIndex: 4, bundleIndex: 8});
+        joyController.add({alias: 'Right Shoulder', axis: false, gamepadIndex: 5, bundleIndex: 9});
+        joyController.add({alias: 'Left Trigger', axis: false, gamepadIndex: 6, bundleIndex: 10});
+        joyController.add({alias: 'Right Trigger', axis: false, gamepadIndex: 7, bundleIndex: 11});
+        joyController.add({alias: 'Select', axis: false, gamepadIndex: 8, bundleIndex: 12});
+        joyController.add({alias: 'Start', axis: false, gamepadIndex: 9, bundleIndex: 13});
+        joyController.add({alias: 'Left Stick Button', axis: false, gamepadIndex: 10, bundleIndex: 14});
+        joyController.add({alias: 'Right Stick Button', axis: false, gamepadIndex: 11, bundleIndex: 15});
+        joyController.add({alias: 'D-Pad Up', axis: false, gamepadIndex: 12, bundleIndex: 16});
+        joyController.add({alias: 'D-Pad Down', axis: false, gamepadIndex: 13, bundleIndex: 17});
+        joyController.add({alias: 'D-Pad Left', axis: false, gamepadIndex: 14, bundleIndex: 18});
+        joyController.add({alias: 'D-Pad Right', axis: false, gamepadIndex: 15, bundleIndex: 19});
+        joyController.add({alias: 'Aux One', axis: false, gamepadIndex: 16, bundleIndex: 20});
+        joyController.add({alias: 'Aux Two', axis: false, gamepadIndex: 17, bundleIndex: 21});
+        joyController.add({alias: 'Aux Three', axis: false, gamepadIndex: 18, bundleIndex: 22});
+        joyController.add({alias: 'Aux Four', axis: false, gamepadIndex: 19, bundleIndex: 23});
       },
 
       /**
@@ -90,19 +90,19 @@ define([
               // new gamepad!!
               if (this.joy1_controller == null) {
                 this.joy1_controller = new ControllerCollection();
-                initializeController(this.joy1_controller);
+                this.initializeController(this.joy1_controller);
                 this.unique_joy_mapping[gamepads[i].index] = 1;
               } else if (this.joy2_controller == null) {
                 this.joy2_controller = new ControllerCollection();
-                initializeController(this.joy2_controller);
+                this.initializeController(this.joy2_controller);
                 this.unique_joy_mapping[gamepads[i].index] = 2;
               } else if (this.joy3_controller == null) {
                 this.joy3_controller = new ControllerCollection();
-                initializeController(this.joy3_controller);
+                this.initializeController(this.joy3_controller);
                 this.unique_joy_mapping[gamepads[i].index] = 3;
               } else if (this.joy4_controller == null) {
                 this.joy4_controller = new ControllerCollection();
-                initializeController(this.joy4_controller);
+                this.initializeController(this.joy4_controller);
                 this.unique_joy_mapping[gamepads[i].index] = 4;
               } // else we're all filled up, ignore for now
             }
