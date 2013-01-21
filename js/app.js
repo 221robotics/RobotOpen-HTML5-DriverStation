@@ -74,7 +74,6 @@ define([
           rolink.enable();
         }
       }
-      
     }
 
     function connectRobot(e) {
@@ -96,9 +95,8 @@ define([
     $("#enable-btn").bind('click', enableRobot);
     $("#connect-btn").bind('click', connectRobot);
 
-    $(function () {
-        $("[rel='tooltip']").tooltip();
-    });
+    // create tooltips
+    $("[rel='tooltip']").tooltip();
   }
 
   return {

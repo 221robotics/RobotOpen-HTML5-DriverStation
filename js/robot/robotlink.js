@@ -145,13 +145,13 @@ define([
     };
 
     RobotLink.prototype.handleJoyData = function(index, id, value) {
-      if (index == 0) {
+      if (index == 1) {
         instance.joy1[id] = value;
-      } else if (index == 1) {
-        instance.joy2[id] = value;
       } else if (index == 2) {
-        instance.joy3[id] = value;
+        instance.joy2[id] = value;
       } else if (index == 3) {
+        instance.joy3[id] = value;
+      } else if (index == 4) {
         instance.joy4[id] = value;
       }
     };
