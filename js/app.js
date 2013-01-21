@@ -14,17 +14,11 @@ define([
 ], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, statView, consoleview){
   var init = function(){
 
-    // disable backbone sync
-    Backbone.sync = function(method, model, success, error){ 
-      success();
-    }
-
     // create new robot link object
     var rolink = new RobotLink();
 
     // bind joystick handler to rolink
     joystickHandler.subscribe(rolink);
-    joystickHandler.init();
 
     // init gamepad library
     gamepad.init(joystickHandler);

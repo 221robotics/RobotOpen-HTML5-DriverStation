@@ -6,6 +6,7 @@ require.config({
     jquery: '../lib/jquery.min',
     highcharts: '../lib/highcharts',
     backbone: '../lib/backbone.min',
+    localstorage: '../lib/backbone.localStorage',
     json2: '../lib/json2',
     bootstrap: '../lib/bootstrap.min',
     underscore: '../lib/underscore.min'
@@ -37,6 +38,11 @@ require.config({
         //Once loaded, use the global 'Backbone' as the
         //module value.
         exports: 'Backbone'
+    },
+    'localstorage': {
+        //These script dependencies should be loaded before loading
+        //backbone.js
+        deps: ['backbone']
     }
   }
 });

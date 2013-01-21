@@ -11,8 +11,7 @@
       "udp-bind"
     ]},
     "notifications",
-    "storage",
-    "unlimitedStorage"
+    "storage"
   ],
 
   "app": {
