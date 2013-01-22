@@ -18,7 +18,9 @@ define([
     render: function(){
       // chrome app restrictions blow so we have to define our template inline
       var buttonIdentifier;
-      if (this.model.get('axis'))
+      if (this.model.get('remap'))
+        buttonIdentifier = "...";
+      else if (this.model.get('axis'))
         buttonIdentifier = "Axis_"+this.model.get('gamepadIndex');
       else
         buttonIdentifier = "Button_"+this.model.get('gamepadIndex');
@@ -33,6 +35,13 @@ define([
     // `remove()`: We use the method `destroy()` to remove a model from its collection. Normally this would also delete the record from its persistent storage, but we have overridden that (see above).
     remove: function(){
       this.model.destroy();
+    },
+    events: {
+      "click a": "remap"
+    },
+    remap: function() {
+      this.model.set({remap: true});
+      this.render();
     }
   });
   

@@ -142,40 +142,40 @@ define([
             var mappedJoyIndex = this.unique_joy_mapping[chromeIndex];
 
             if (mappedJoyIndex == 1) {
-              this.joy1_view.collection.find(function(item) {
-                if (item.get('gamepadIndex') === id && item.get('axis') === axis) {
+              _(this.joy1_view.collection.models).each(function(item){
+                ref.joy1_view.buttonUpdate(axis, id);
+                if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
                   // we have a match!
-                  ref.joy1_view.buttonUpdate(axis, id);
                   for (var i=0;i<ref.callbacks.length;i++) {
                     ref.callbacks[i].handleJoyData(1, item.get('bundleIndex'), value);
                   }
                 }
               });
             } else if (mappedJoyIndex == 2) {
-              this.joy2_view.collection.find(function(item) {
-                if (item.get('gamepadIndex') === id && item.get('axis') === axis) {
+              _(this.joy2_view.collection.models).each(function(item){
+                ref.joy2_view.buttonUpdate(axis, id);
+                if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
                   // we have a match!
-                  ref.joy2_view.buttonUpdate(axis, id);
                   for (var i=0;i<ref.callbacks.length;i++) {
                     ref.callbacks[i].handleJoyData(2, item.get('bundleIndex'), value);
                   }
                 }
               });
             } else if (mappedJoyIndex == 3) {
-              this.joy3_view.collection.find(function(item) {
-                if (item.get('gamepadIndex') === id && item.get('axis') === axis) {
+              _(this.joy3_view.collection.models).each(function(item){
+                ref.joy3_view.buttonUpdate(axis, id);
+                if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
                   // we have a match!
-                  ref.joy3_view.buttonUpdate(axis, id);
                   for (var i=0;i<ref.callbacks.length;i++) {
                     ref.callbacks[i].handleJoyData(3, item.get('bundleIndex'), value);
                   }
                 }
               });
             } else if (mappedJoyIndex == 4) {
-              this.joy4_view.collection.find(function(item) {
-                if (item.get('gamepadIndex') === id && item.get('axis') === axis) {
+              _(this.joy4_view.collection.models).each(function(item){
+                ref.joy4_view.buttonUpdate(axis, id);
+                if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
                   // we have a match!
-                  ref.joy4_view.buttonUpdate(axis, id);
                   for (var i=0;i<ref.callbacks.length;i++) {
                     ref.callbacks[i].handleJoyData(4, item.get('bundleIndex'), value);
                   }

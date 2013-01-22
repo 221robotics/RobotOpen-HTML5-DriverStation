@@ -15,8 +15,14 @@ define([
       this.collection.bind('add', this.appendItem); // collection event binder
       this.collection.bind('reset', this.render);
     },
-    buttonUpdate: function(axis, id) {
-
+    buttonUpdate: function(axs, id) {
+      var self = this;
+      _(this.collection.models).each(function(item){
+        if (item.get('remap')) {
+          item.set({axis: axs, gamepadIndex: id, remap: false});
+          item.sync('update', item);
+        }
+      }, this);
     },
     render: function(){
       var self = this;
