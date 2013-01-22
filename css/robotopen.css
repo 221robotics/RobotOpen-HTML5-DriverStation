@@ -27,6 +27,11 @@ body {
 	border:1px solid #dddddd;
 }
 
+#robot {
+	height:570px;
+	overflow:auto;
+}
+
 #main-area {
 	height: 700px;
 }
