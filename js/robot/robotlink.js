@@ -15,19 +15,8 @@ define([
     var instance;
 
     // Start with the constructor
-    function RobotLink(ip, port) {
+    function RobotLink() {
       instance = this;
-
-      // setup ip address and port
-      if (ip == null)
-        instance.ip = "10.0.0.22";
-      else
-        instance.ip = ip;
-
-      if (port == null)
-        instance.port = 22211;
-      else
-        instance.port = 22211;
 
       instance.bundleView = new BundleView();
 
@@ -173,13 +162,20 @@ define([
     };
 
     RobotLink.prototype.connect = function() {
-        try {
-          instance.socket = new chromeNetworking.clients.udp.roClient();
+      try {
+        instance.socket = new chromeNetworking.clients.udp.roClient();
 
-          // pass the robotlink instance to the socket object
-          var t = this;
+        // pass the robotlink instance to the socket object
+        var t = this;
+
+        // get the port
+        try {
+          var port = parseInt($('#robotPort').val());
+        } catch (err) {
+          var port = 22211;
+        }
         
-        instance.socket.connect(instance.ip, instance.port,
+        instance.socket.connect($('#robotIp').val(), port,
           function() {
               t.socket_on_open(t);
           }
