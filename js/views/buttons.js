@@ -25,6 +25,7 @@ define([
     $("#enable-btn").html('Disable Robot');
     $("#enable-btn").removeClass('btn-info');
     $("#enable-btn").addClass('btn-warning');
+    $("#disablehint").show();
   };
 
   var disabled = function() {
@@ -32,6 +33,7 @@ define([
     $("#enable-btn").html('Enable Robot');
     $("#enable-btn").removeClass('btn-warning');
     $("#enable-btn").addClass('btn-info');
+    $("#disablehint").hide();
   };
 
   return {

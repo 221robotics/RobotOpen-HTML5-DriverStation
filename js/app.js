@@ -97,6 +97,12 @@ define([
 
     // create tooltips
     $("[rel='tooltip']").tooltip();
+
+    $(document).keydown(function(evt) {
+      if (evt.keyCode == 32 && rolink.enabled) {
+        rolink.disable();
+      }
+    });
   }
 
   return {
