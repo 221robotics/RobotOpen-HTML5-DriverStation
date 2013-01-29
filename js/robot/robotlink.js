@@ -43,7 +43,10 @@ define([
       instance.rx_count = 0;
       instance.tx_count = 0;
       // data xmit rate (ms)
-      instance.xmit_rate = 100;
+      instance.xmit_rate = 50;
+
+      // keep track of if the user requested a connect/disconnect
+      instance.connectRequested = false;
 
       // joystick count
       instance.joy_count = 0;
@@ -162,6 +165,7 @@ define([
     };
 
     RobotLink.prototype.connect = function() {
+      instance.connectRequested = true;
       try {
         instance.socket = new chromeNetworking.clients.udp.roClient();
 
@@ -271,8 +275,7 @@ define([
       function killConnect() { 
         var now = new Date().getTime();
         if (now - instance.lastPacket > 2000) {
-          instance.disconnect(); 
-          clearInterval(instance.autodrop_timer); 
+          instance.disconnect();
         }
       }
       instance.autodrop_timer = setInterval(killConnect, 1000);
@@ -290,56 +293,58 @@ define([
     };
 
     RobotLink.prototype.socket_on_message = function(link, frame) {
-      clearTimeout(instance.autodrop_timer);
+      if (instance.connectRequested) {
+        link.rx_count++;
 
-      link.rx_count++;
+        // average latency
+        var now = new Date().getTime();
+        instance.av.add(now - instance.lastPacket);
 
-      // average latency
-      var now = new Date().getTime();
-      instance.av.add(now - instance.lastPacket);
-
-      // update the latency chart every second
-      if (now - instance.lastChart > 1000) {
-        charts.addPoint(Math.round(now - instance.lastPacket));
-        instance.lastChart = now;
-      }
-      
-      instance.lastPacket = now;
-      instance.statModel.set({packetRx: instance.rx_count, averageLatency: instance.av.getAverage(), connected: true, connecting: false});
-
-      if (frame.data instanceof ArrayBuffer) {
-        var bytearray = new Uint8Array(frame.data);
-
-        switch (String.fromCharCode(bytearray[0])) {
-          case 'p':
-            // feed the parsed packet to the console view
-            consoleview.log(packetparser.parsePrint(bytearray));
-            break;
-          case 'd':
-            instance.bundleView.updateBundles(packetparser.parseDS(frame.data));
-            break;
-          case 's':
-            link.debug('GOT STATUS PACKET');
-            break;
-          case 'r':
-            link.debug('GOT PARAMETER PACKET');
-            break;
-          default:
-            break;
+        // update the latency chart every second
+        if (now - instance.lastChart > 1000) {
+          charts.addPoint(Math.round(now - instance.lastPacket));
+          instance.lastChart = now;
         }
+        
+        instance.lastPacket = now;
+        instance.statModel.set({packetRx: instance.rx_count, averageLatency: instance.av.getAverage(), connected: true, connecting: false});
 
-        var myString = "";
+        if (frame.data instanceof ArrayBuffer) {
+          var bytearray = new Uint8Array(frame.data);
 
-        for (var i = 0; i < bytearray.length-1; i++) {
-          myString += bytearray[i].toString(16) + " ";
+          switch (String.fromCharCode(bytearray[0])) {
+            case 'p':
+              // feed the parsed packet to the console view
+              consoleview.log(packetparser.parsePrint(bytearray));
+              break;
+            case 'd':
+              instance.bundleView.updateBundles(packetparser.parseDS(frame.data));
+              break;
+            case 's':
+              link.debug('GOT STATUS PACKET');
+              break;
+            case 'r':
+              link.debug('GOT PARAMETER PACKET');
+              break;
+            default:
+              break;
+          }
+
+          var myString = "";
+
+          for (var i = 0; i < bytearray.length-1; i++) {
+            myString += bytearray[i].toString(16) + " ";
+          }
+          myString += bytearray[bytearray.length-1].toString(16);
+
+          instance.debug("RX: " + myString);
         }
-        myString += bytearray[bytearray.length-1].toString(16);
-
-        instance.debug("RX: " + myString);
       }
     };
 
     RobotLink.prototype.disconnect = function() {
+      clearTimeout(instance.autodrop_timer);
+      instance.connectRequested = false;
       buttons.disconnected();
       instance.statModel.set({connected: false, connecting: false});
       instance.socket.disconnect();
