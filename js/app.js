@@ -85,11 +85,37 @@ define([
       }
     }
 
+    function showJoyOne() {
+      showSetup();
+      $('#myTab a[href="#joy1main"]').tab('show');
+    }
+
+    function showJoyTwo() {
+      showSetup();
+      $('#myTab a[href="#joy2main"]').tab('show');
+    }
+
+    function showJoyThree() {
+      showSetup();
+      $('#myTab a[href="#joy3main"]').tab('show');
+    }
+
+    function showJoyFour() {
+      showSetup();
+      $('#myTab a[href="#joy4main"]').tab('show');
+    }
+
     // bind nav links to UI actions
     $("#setup-link").bind('click', showSetup);
     $("#console-link").bind('click', showConsole);
     $("#control-link").bind('click', showControls);
     $("#parameters-link").bind('click', showParameters);
+
+    // bind joy labels to UI actions
+    $("#joylabel1").bind('click', showJoyOne);
+    $("#joylabel2").bind('click', showJoyTwo);
+    $("#joylabel3").bind('click', showJoyThree);
+    $("#joylabel4").bind('click', showJoyFour);
 
     // control buttons
     $("#enable-btn").bind('click', enableRobot);

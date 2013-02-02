@@ -143,7 +143,8 @@ define([
 
             if (mappedJoyIndex == 1) {
               _(this.joy1_view.collection.models).each(function(item){
-                ref.joy1_view.buttonUpdate(axis, id);
+                if (!axis || (value > 190 || value < 63))
+                  ref.joy1_view.buttonUpdate(axis, id);
                 if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
                   // we have a match!
                   for (var i=0;i<ref.callbacks.length;i++) {
@@ -153,7 +154,8 @@ define([
               });
             } else if (mappedJoyIndex == 2) {
               _(this.joy2_view.collection.models).each(function(item){
-                ref.joy2_view.buttonUpdate(axis, id);
+                if (!axis || (value > 190 || value < 63))
+                  ref.joy2_view.buttonUpdate(axis, id);
                 if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
                   // we have a match!
                   for (var i=0;i<ref.callbacks.length;i++) {
@@ -163,7 +165,8 @@ define([
               });
             } else if (mappedJoyIndex == 3) {
               _(this.joy3_view.collection.models).each(function(item){
-                ref.joy3_view.buttonUpdate(axis, id);
+                if (!axis || (value > 190 || value < 63))
+                  ref.joy3_view.buttonUpdate(axis, id);
                 if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
                   // we have a match!
                   for (var i=0;i<ref.callbacks.length;i++) {
@@ -173,7 +176,8 @@ define([
               });
             } else if (mappedJoyIndex == 4) {
               _(this.joy4_view.collection.models).each(function(item){
-                ref.joy4_view.buttonUpdate(axis, id);
+                if (!axis || (value > 190 || value < 63))
+                  ref.joy4_view.buttonUpdate(axis, id);
                 if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
                   // we have a match!
                   for (var i=0;i<ref.callbacks.length;i++) {

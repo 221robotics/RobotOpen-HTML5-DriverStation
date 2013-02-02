@@ -18,8 +18,8 @@ define([
     buttonUpdate: function(axs, id) {
       var self = this;
       _(this.collection.models).each(function(item){
-        if (item.get('remap')) {
-          item.set({axis: axs, gamepadIndex: id, remap: false});
+        if (item.get('remap') && (item.get('axis') == axs)) {
+          item.set({gamepadIndex: id, remap: false});
           item.sync('update', item);
         }
       }, this);
