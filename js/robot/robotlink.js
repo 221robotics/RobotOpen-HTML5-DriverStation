@@ -246,6 +246,12 @@ define([
       instance.xmit(bytearray.buffer);
     };
 
+    RobotLink.prototype.sendByteArray = function(bArray) {
+      if (instance.is_connected) {
+        instance.xmit(bArray.buffer);
+      }
+    };
+
     RobotLink.prototype.xmit = function(frame) {
         try {
           // increment tx count
@@ -299,6 +305,7 @@ define([
       instance.statModel.set({connectionStart: new Date(), connectionEnd: new Date()});
       buttons.connected();
       instance.lastPacket = new Date().getTime();
+      instance.parameterView.clearAll();
       link.debug("Socket opened.");
 
       // setup the timer to keep data supplied to the robot

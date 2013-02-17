@@ -10,8 +10,9 @@ define([
   'views/charts',
   'backbone',
   'views/status',
-  'views/console'
-], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, statView, consoleview){
+  'views/console',
+  'robot/updateparams'
+], function($, bootstrap, gamepad, highcharts, networking, RobotLink, joystickHandler, charts, Backbone, statView, consoleview, updateparams){
   var init = function(){
 
     // create new robot link object
@@ -28,6 +29,9 @@ define([
     
     // bind statView to robot link
     rolink.setStatModel(statView);
+
+    // bind rolink to updateparams
+    updateparams.init(rolink);
     
     function removeAllActive() {
       consoleview.deactivate();
@@ -93,6 +97,14 @@ define([
       }
     }
 
+    function commitParams(e) {
+      if (rolink.is_connected) {
+        if (!rolink.enabled) {
+          updateparams.update();
+        }
+      }
+    }
+
     function showJoyOne() {
       showSetup();
       $('#myTab a[href="#joy1main"]').tab('show');
@@ -138,6 +150,7 @@ define([
     $("#control-link").bind('click', showControls);
     $("#parameters-link").bind('click', showParameters);
     $("#getParameters").bind('click', getParams);
+    $("#commitParameters").bind('click', commitParams);
 
     // bind joy labels to UI actions
     $("#joylabel1").bind('click', showJoyOne);

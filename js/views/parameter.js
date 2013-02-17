@@ -29,13 +29,14 @@ define([
         this.collection.remove(this.collection.models[0]);
       }
       // clear the view
-      this.$el.html('');
+      this.$el.html('<tr><td colspan="4">No parameters loaded</td></tr>');
     },
     updateParameters: function(parameters){
       var self = this;
 
       // clear all existing parameters
       self.clearAll();
+      this.$el.html('');
 
       // add each parameter to the collection
       _.each(parameters, function(parameter) {

@@ -94,14 +94,14 @@ define([
       
       if (typeChar == 'b') {
         if (dv.getUint8(byteOffset) > 0)
-          pModel.set({value: 'True', type: 'Boolean', address: address});
+          pModel.set({value: true, type: 'Boolean', address: address});
         else
-          pModel.set({value: 'False', type: 'Boolean', address: address});
+          pModel.set({value: false, type: 'Boolean', address: address});
 
         byteOffset += 4;
       }
       else if (typeChar == 'c') {
-        pModel.set({value: dv.getUint8(byteOffset), type: 'Char', address: address});
+        pModel.set({value: dv.getInt8(byteOffset), type: 'Char', address: address});
 
         byteOffset += 4;
       }
