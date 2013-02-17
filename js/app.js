@@ -85,6 +85,14 @@ define([
       }
     }
 
+    function getParams(e) {
+      if (rolink.is_connected) {
+        if (!rolink.enabled) {
+          rolink.getParams();
+        }
+      }
+    }
+
     function showJoyOne() {
       showSetup();
       $('#myTab a[href="#joy1main"]').tab('show');
@@ -107,18 +115,18 @@ define([
 
     $('#robotPort').blur(function() {
       if (!isNaN(parseInt($('#robotPort').val()))) {
-        chrome.storage.sync.set({'robotPort': parseInt($('#robotPort').val())}, function() {
+        chrome.storage.local.set({'robotPort': parseInt($('#robotPort').val())}, function() {
           console.log('saved robot port');
         });
       } else {
-        chrome.storage.sync.set({'robotPort': 22211}, function() {
+        chrome.storage.local.set({'robotPort': 22211}, function() {
           console.log('saved robot port 22211');
         });
       }
     });
 
     $('#robotIp').blur(function() {
-      chrome.storage.sync.set({'robotIp': $('#robotIp').val()}, function() {
+      chrome.storage.local.set({'robotIp': $('#robotIp').val()}, function() {
         // saved
         console.log('saved robot IP');
       });
@@ -129,6 +137,7 @@ define([
     $("#console-link").bind('click', showConsole);
     $("#control-link").bind('click', showControls);
     $("#parameters-link").bind('click', showParameters);
+    $("#getParameters").bind('click', getParams);
 
     // bind joy labels to UI actions
     $("#joylabel1").bind('click', showJoyOne);
@@ -144,7 +153,7 @@ define([
     $("[rel='tooltip']").tooltip();
 
     // load in robot config
-    chrome.storage.sync.get(['robotPort', 'robotIp'], function(items) {
+    chrome.storage.local.get(['robotPort', 'robotIp'], function(items) {
       if (items.robotPort !== undefined && items.robotIp !== undefined) {
         $('#robotIp').val(items.robotIp);
         $('#robotPort').val(items.robotPort);
