@@ -3,7 +3,7 @@ define([
   'underscore',
   'backbone',
   'collections/bundles',
-  'views/item'
+  'views/bundleitem'
 ], function($, _, Backbone, BundleCollection, ItemView){
   var BundleView = Backbone.View.extend({
     el: $('#bundles'),

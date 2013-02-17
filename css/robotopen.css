@@ -24,11 +24,9 @@ html {
 }
 
 #parameters {
-	background-color:#ffffff;
-	height:615px;
+	min-height:615px;
 	overflow:auto;
 	padding:5px;
-	border:1px solid #dddddd;
 }
 
 #robot {

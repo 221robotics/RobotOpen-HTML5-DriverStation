@@ -1,8 +1,9 @@
 // Filename: packetparser.js
 define([
   'jquery',
-  'models/bundle'
-], function($, BundleModel){
+  'models/bundle',
+  'models/parameter'
+], function($, BundleModel, ParameterModel){
   var parseDS = function(data){
     var bundleArray = new Array();
     var dv = new DataView(data); 
@@ -64,26 +65,78 @@ define([
     /*
 
     length
-    address
+    address (0-99)
     type
     val1
     val2
+    val3
+    val4
     id
 
+    #define BOOL 'b'
+    #define CHAR 'c'
+    #define INT 'i'
+    #define LONG 'l'
+    #define FLOAT 'f'
+
     */
+
+    var parameterArray = new Array();
+    var dv = new DataView(data); 
+    var byteOffset = 1; // skip the identifier for the packet type
+
+    while (byteOffset < data.byteLength) {
+      var pModel = new ParameterModel();
+
+      var packetLengthOffset = dv.getUint8(byteOffset) + byteOffset++;
+      var address = dv.getUint8(byteOffset++);
+      var typeChar = String.fromCharCode(dv.getUint8(byteOffset++));
+      
+      if (typeChar == 'b') {
+        if (dv.getUint8(byteOffset) > 0)
+          pModel.set({value: 'True', type: 'Boolean', address: address});
+        else
+          pModel.set({value: 'False', type: 'Boolean', address: address});
+
+        byteOffset += 4;
+      }
+      else if (typeChar == 'c') {
+        pModel.set({value: dv.getUint8(byteOffset), type: 'Char', address: address});
+
+        byteOffset += 4;
+      }
+      else if (typeChar == 'i') {
+        pModel.set({value: dv.getInt16(byteOffset), type: 'Integer', address: address});
+
+        byteOffset += 4;
+      }
+      else if (typeChar == 'l') {
+        pModel.set({value: dv.getInt32(byteOffset), type: 'Long', address: address});
+
+        byteOffset += 4;
+      }
+      else if (typeChar == 'f') {
+        pModel.set({value: dv.getFloat32(byteOffset), type: 'Float', address: address});
+
+        byteOffset += 4;
+      }
+      else {
+        // not good, give up
+        console.log('Bad Params Packet!');
+        return parameterArray;
+      }
+
+      var remainingLength = packetLengthOffset - byteOffset;
+
+      // grab the label for this DS bundle
+      pModel.set({name: String.fromCharCode.apply(null, new Uint8Array(data, byteOffset, remainingLength))});
+      parameterArray.push(pModel);
+
+      byteOffset += remainingLength;
+    }
+
+    return parameterArray;
   }
-
-  var parseStatus = function(data){
-    /*
-
-    protocol_ver
-    controller_state
-    firmware_ver
-    device_id
-    uptime
-
-    */
-  };
 
   var parsePrint = function(data){
     var returnString = "";
@@ -95,6 +148,7 @@ define([
 
   return {
     parseDS: parseDS,
+    parseParameters: parseParameters,
     parsePrint: parsePrint
   };
 });

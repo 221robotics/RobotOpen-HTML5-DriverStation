@@ -10,8 +10,9 @@ define([
   'utils',
   'views/charts',
   'views/bundle',
+  'views/parameter',
   'views/buttons'
-], function($, packetparser, consoleview, Average, utils, charts, BundleView, buttons){
+], function($, packetparser, consoleview, Average, utils, charts, BundleView, ParameterView, buttons){
     var instance;
 
     // Start with the constructor
@@ -19,6 +20,7 @@ define([
       instance = this;
 
       instance.bundleView = new BundleView();
+      instance.parameterView = new ParameterView();
 
       // rolling average to make data less jumpy
       instance.av = new Average(50);
@@ -333,19 +335,20 @@ define([
               instance.bundleView.updateBundles(packetparser.parseDS(frame.data));
               break;
             case 'r':
-              //link.debug('GOT PARAMETER PACKET');
-              var myString = "";
-
-              for (var i = 0; i < bytearray.length-1; i++) {
-                myString += bytearray[i].toString(16) + " ";
-              }
-              myString += bytearray[bytearray.length-1].toString(16);
-
-              console.log("PARAMS: " + myString);
+              instance.parameterView.updateParameters(packetparser.parseParameters(frame.data));
               break;
             default:
               break;
           }
+
+          /*var myString = "";
+
+          for (var i = 0; i < bytearray.length-1; i++) {
+            myString += bytearray[i].toString(16) + " ";
+          }
+          myString += bytearray[bytearray.length-1].toString(16);
+
+          console.log("RX: " + myString);*/
         }
       }
     };

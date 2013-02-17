@@ -155,6 +155,7 @@
                   
                   <header>
                     <div class="pull-right">
+                      <span class="label label-important" id="joy1name">Robot Must Be Disabled To Modify</span>&nbsp;
                       <a class="btn btn-small" id="getParameters">Update</a>
                       <a class="btn btn-small" id="commitParameters">Commit All</a>
                     </div>
@@ -165,8 +166,22 @@
                 ================================================== -->
                 <section id="parameters-section">
                   <div class="row-fluid row-fluid-alternate-bg">
-                    <div class="span12">
-                        <div id="parameters">Waiting for connection...</div>
+                    <div class="span12" id="parameters">
+                        <table class="table table-striped full-section table-hover">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Address</th>
+                              <th>Type</th>
+                              <th>Value</th>
+                            </tr>
+                          </thead>
+                          <tbody id="parameter-body">
+                            <tr>
+                              <td colspan="4">Waiting for connection...</td>
+                            </tr>
+                          </tbody>
+                        </table>
                     </div>
                   </div>
                 </section>
@@ -204,7 +219,7 @@
                           <div id="myTabContent" class="tab-content">
                             <div class="tab-pane active" id="joy1main">
                               <h4>Joystick #1</h4>
-                              <b id="joy1name">Not Mapped</b><br /><br />
+                              <span class="label label-info" id="joy1name">Not Mapped</span><br /><br />
                               <table class="table" id="joy1map">
                                 <thead>
                                   <td>Identifier</td>
@@ -216,7 +231,7 @@
                             </div>
                             <div class="tab-pane" id="joy2main">
                               <h4>Joystick #2</h4>
-                              <b id="joy2name">Not Mapped</b><br /><br />
+                              <span class="label label-info" id="joy2name">Not Mapped</span><br /><br />
                               <table class="table" id="joy2map">
                                 <thead>
                                   <td>Identifier</td>
@@ -228,7 +243,7 @@
                             </div>
                             <div class="tab-pane" id="joy3main">
                               <h4>Joystick #3</h4>
-                              <b id="joy3name">Not Mapped</b><br /><br />
+                              <span class="label label-info" id="joy3name">Not Mapped</span><br /><br />
                               <table class="table" id="joy3map">
                                 <thead>
                                   <td>Identifier</td>
@@ -240,7 +255,7 @@
                             </div>
                             <div class="tab-pane" id="joy4main">
                               <h4>Joystick #4</h4>
-                              <b id="joy4name">Not Mapped</b><br /><br />
+                              <span class="label label-info" id="joy4name">Not Mapped</span><br /><br />
                               <table class="table" id="joy4map">
                                 <thead>
                                   <td>Identifier</td>
