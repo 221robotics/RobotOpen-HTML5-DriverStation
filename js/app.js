@@ -105,6 +105,25 @@ define([
       $('#myTab a[href="#joy4main"]').tab('show');
     }
 
+    $('#robotPort').blur(function() {
+      if (!isNaN(parseInt($('#robotPort').val()))) {
+        chrome.storage.sync.set({'robotPort': parseInt($('#robotPort').val())}, function() {
+          console.log('saved robot port');
+        });
+      } else {
+        chrome.storage.sync.set({'robotPort': 22211}, function() {
+          console.log('saved robot port 22211');
+        });
+      }
+    });
+
+    $('#robotIp').blur(function() {
+      chrome.storage.sync.set({'robotIp': $('#robotIp').val()}, function() {
+        // saved
+        console.log('saved robot IP');
+      });
+    });
+
     // bind nav links to UI actions
     $("#setup-link").bind('click', showSetup);
     $("#console-link").bind('click', showConsole);
@@ -123,6 +142,17 @@ define([
 
     // create tooltips
     $("[rel='tooltip']").tooltip();
+
+    // load in robot config
+    chrome.storage.sync.get(['robotPort', 'robotIp'], function(items) {
+      if (items.robotPort !== undefined && items.robotIp !== undefined) {
+        $('#robotIp').val(items.robotIp);
+        $('#robotPort').val(items.robotPort);
+        console.log('successfully loaded stored robot config');
+      } else {
+        console.log('robot config not found, loading defaults');
+      }
+    });
 
     $(document).keydown(function(evt) {
       if (evt.keyCode == 32 && rolink.enabled) {
