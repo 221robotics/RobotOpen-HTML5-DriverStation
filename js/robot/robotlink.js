@@ -203,10 +203,10 @@ define([
         // when the robot is disabled we must sent heartbeat frames to keep the connection alive
         if (!instance.enabled || instance.joy_count < 1) {
           var buf = new ArrayBuffer(3); // 2 bytes for each char
-            var bufView = new Uint8Array(buf);
-            bufView[0] = 104; // h
-            bufView[1] = 238; // 0xEE
-            bufView[2] = 1;   // 0x01
+          var bufView = new Uint8Array(buf);
+          bufView[0] = 104; // h
+          bufView[1] = 238; // 0xEE
+          bufView[2] = 1;   // 0x01
           instance.xmit(buf);
         }
         else { // otherwise send joystick data
@@ -271,6 +271,18 @@ define([
       }
     };
 
+    RobotLink.prototype.getParams = function() {
+      if (instance.is_connected && !instance.enabled) {
+        // get parameters packet
+        var buf = new ArrayBuffer(3); // 2 bytes for each char
+        var bufView = new Uint8Array(buf);
+        bufView[0] = 103; // g
+        bufView[1] = 234; // 0xEA
+        bufView[2] = 65;  // 0x41
+        instance.xmit(buf);
+      }
+    }
+
     RobotLink.prototype.socket_on_open = function(link) {
       function killConnect() { 
         var now = new Date().getTime();
@@ -320,24 +332,20 @@ define([
             case 'd':
               instance.bundleView.updateBundles(packetparser.parseDS(frame.data));
               break;
-            case 's':
-              link.debug('GOT STATUS PACKET');
-              break;
             case 'r':
-              link.debug('GOT PARAMETER PACKET');
+              //link.debug('GOT PARAMETER PACKET');
+              var myString = "";
+
+              for (var i = 0; i < bytearray.length-1; i++) {
+                myString += bytearray[i].toString(16) + " ";
+              }
+              myString += bytearray[bytearray.length-1].toString(16);
+
+              console.log("PARAMS: " + myString);
               break;
             default:
               break;
           }
-
-          var myString = "";
-
-          for (var i = 0; i < bytearray.length-1; i++) {
-            myString += bytearray[i].toString(16) + " ";
-          }
-          myString += bytearray[bytearray.length-1].toString(16);
-
-          instance.debug("RX: " + myString);
         }
       }
     };
