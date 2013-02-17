@@ -64,18 +64,22 @@ define([
             if (!this.joy1_mapped) {
               this.joy1_mapped = true;
               this.unique_joy_mapping[gamepads[i].index] = 1;
+              $("#joy1name").html(gamepads[i].id);
               joylabels.joyMapped(1);
             } else if (!this.joy2_mapped) {
               this.joy2_mapped = true;
               this.unique_joy_mapping[gamepads[i].index] = 2;
+              $("#joy2name").html(gamepads[i].id);
               joylabels.joyMapped(2);
             } else if (!this.joy3_mapped) {
               this.joy3_mapped = true;
               this.unique_joy_mapping[gamepads[i].index] = 3;
+              $("#joy3name").html(gamepads[i].id);
               joylabels.joyMapped(3);
             } else if (!this.joy4_mapped) {
               this.joy4_mapped = true;
               this.unique_joy_mapping[gamepads[i].index] = 4;
+              $("#joy4name").html(gamepads[i].id);
               joylabels.joyMapped(4);
             } // else we're all filled up, ignore for now
           }
@@ -87,6 +91,7 @@ define([
           if (this.unique_joy_mapping[remainingJoys[i]] == 1 && this.joy1_mapped) {
             // joystick 1 has been disconnected
             this.joy1_mapped = false;
+            $("#joy1name").html('Not Mapped');
             for (var i=0;i<this.callbacks.length;i++) { 
               this.callbacks[i].resetJoy(1);
             }
@@ -94,6 +99,7 @@ define([
           } else if (this.unique_joy_mapping[remainingJoys[i]] == 2 && this.joy2_mapped) {
             // joystick 2 has been disconnected
             this.joy2_mapped = false;
+            $("#joy2name").html('Not Mapped');
             for (var i=0;i<this.callbacks.length;i++) { 
               this.callbacks[i].resetJoy(2);
             }
@@ -101,6 +107,7 @@ define([
           } else if (this.unique_joy_mapping[remainingJoys[i]] == 3 && this.joy3_mapped) {
             // joystick 3 has been disconnected
             this.joy3_mapped = false;
+            $("#joy3name").html('Not Mapped');
             for (var i=0;i<this.callbacks.length;i++) { 
               this.callbacks[i].resetJoy(3);
             }
@@ -108,6 +115,7 @@ define([
           } else if (this.unique_joy_mapping[remainingJoys[i]] == 4 && this.joy4_mapped) {
             // joystick 4 has been disconnected
             this.joy4_mapped = false;
+            $("#joy4name").html('Not Mapped');
             for (var i=0;i<this.callbacks.length;i++) { 
               this.callbacks[i].resetJoy(4);
             }

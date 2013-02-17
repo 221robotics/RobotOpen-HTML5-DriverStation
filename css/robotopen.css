@@ -6,6 +6,10 @@ body {
     overflow-y:auto;
 }
 
+html {
+	overflow-y:auto;
+}
+
 #console {
 	background-color:#ffffff;
 	height:615px;
@@ -30,14 +34,6 @@ body {
 #robot {
 	height:570px;
 	overflow:auto;
-}
-
-#main-area {
-	height: 700px;
-}
-
-#content {
-	height: 700px;
 }
 
 #feedback-section {
