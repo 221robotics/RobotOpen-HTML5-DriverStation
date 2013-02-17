@@ -154,12 +154,11 @@ define([
 
     // load in robot config
     chrome.storage.local.get(['robotPort', 'robotIp'], function(items) {
-      if (items.robotPort !== undefined && items.robotIp !== undefined) {
-        $('#robotIp').val(items.robotIp);
+      if (items.robotPort !== undefined) {
         $('#robotPort').val(items.robotPort);
-        console.log('successfully loaded stored robot config');
-      } else {
-        console.log('robot config not found, loading defaults');
+      }
+      if (items.robotIp !== undefined) {
+        $('#robotIp').val(items.robotIp);
       }
     });
 
