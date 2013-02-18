@@ -8,7 +8,8 @@ define([
     tagName: 'tr', // name of tag to be created
 
     events : {
-      "blur #modinput": "onBlur"
+      "blur #modinput": "onBlur",
+      "click #modcheck": "onBlur"
     },      
 
     // `initialize()` now binds model change/removal to the corresponding handlers below.
@@ -25,7 +26,7 @@ define([
         $(this.el).html('<td class="primary">' + this.model.get('name') + '</td><td>' + this.model.get('address') + '</td><td>' + this.model.get('type') + '</td><td><input type="text" id="modinput" placeholder="' + this.model.get('value') + '" value="' + this.model.get('value') + '" /></td>');
       } else {
         var checkedVal = this.model.get('value') ? ' checked' : '';
-        $(this.el).html('<td class="primary">' + this.model.get('name') + '</td><td>' + this.model.get('address') + '</td><td>' + this.model.get('type') + '</td><td><input type="checkbox" id="modinput"'+checkedVal+' /></td>');
+        $(this.el).html('<td class="primary">' + this.model.get('name') + '</td><td>' + this.model.get('address') + '</td><td>' + this.model.get('type') + '</td><td><input type="checkbox" id="modcheck"'+checkedVal+' /></td>');
       }
 
       return this; // for chainable calls, like .render().el
