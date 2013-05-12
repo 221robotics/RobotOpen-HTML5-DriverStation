@@ -165,6 +165,9 @@ define([
     // create tooltips
     $("[rel='tooltip']").tooltip();
 
+    // no joy enable
+    $("#no-joy-en-btn").bind('click', rolink.setNoJoyEnable);
+
     // load in robot config
     chrome.storage.local.get(['robotPort', 'robotIp'], function(items) {
       if (items.robotPort !== undefined) {
