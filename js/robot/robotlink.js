@@ -53,6 +53,9 @@ define([
       // joystick count
       instance.joy_count = 0;
 
+      // no joystick enable
+      instance.no_joy_enable = false;
+
       // how we update the status model
       instance.statModel = null;
 
@@ -199,11 +202,16 @@ define([
       }
     };
 
+    RobotLink.prototype.setNoJoyEnable = function() {
+      instance.no_joy_enable = document.getElementById("no-joy-en-btn").checked;
+    }
+
     RobotLink.prototype.robot_tx = function() {
       if (instance.is_connected) {
         instance.statModel.set({connectionEnd: new Date()});
         // when the robot is disabled we must sent heartbeat frames to keep the connection alive
-        if (!instance.enabled || instance.joy_count < 1) {
+        console.log("tx");
+        if (!instance.enabled || ((instance.joy_count < 1) && !instance.no_joy_enable)) {
           var buf = new ArrayBuffer(3); // 2 bytes for each char
           var bufView = new Uint8Array(buf);
           bufView[0] = 104; // h
