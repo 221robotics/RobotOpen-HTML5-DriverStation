@@ -9,6 +9,7 @@ define([
       // print debug statements to console
       debugging: true,
 
+      //Array to simplify, may break things
       joy_views: [
         new ControllerView({localIdentifier: 'joy1'}),
         new ControllerView({localIdentifier: 'joy2'}),
@@ -16,6 +17,9 @@ define([
         new ControllerView({localIdentifier: 'joy4'})
       ],
 
+      //null means unmapped, removes the additional 4 boolean variables. 
+      //Array organizes the mapping, since there will only ever be 4 joysticks. 
+      //This may break things as the keys are now the values and the values are the keys zero indexed. 
       joy_mapping: [null,null,null,null],
 
       // keep track of components that change (lookup)
@@ -117,13 +121,14 @@ define([
           // look up the mapping info and translate from gamepad IDs to robotlink indexes
           if (this.joy_mapping.indexOf(chromeIndex) != -1) {
             var mappedJoyIndex = this.joy_mapping.indexOf(chromeIndex);
+
             _(this.joy_views[mappedJoyIndex].collection.models).each(function(item){
               if (!axis || (value > 190 || value < 63))
                 ref.joy_views[mappedJoyIndex].buttonUpdate(axis, id);
               if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
                 // we have a match!
                 for (var i=0;i<ref.callbacks.length;i++) {
-                  ref.callbacks[i].handleJoyData(mappedJoyIndex, item.get('bundleIndex'), value);
+                  ref.callbacks[i].handleJoyData(mappedJoyIndex+1, item.get('bundleIndex'), value);
                 }
               }
             });//45 to 10
@@ -145,20 +150,23 @@ define([
           this.joy_mapping[this.joy_mapping.indexOf(gamepad)] = null;
         }
 
+        //Cache and Map
+        var previous = this.joy_mapping[joystick-1];
+        this.joy_mapping[joystick-1] = gamepad;
+
         //Connect previously disconnected
-        if(this.joy_mapping[joystick-1] == null && gamepad != null) {
+        if(previous == null && this.joy_mapping[joystick-1] != null) {
           joylabels.joyMapped(joystick);
         }
         //Disconnect previously connected
-        if(gamepad == null) {
+        if(previous != null && this.joy_mapping[joystick-1] == null) {
           for (var i=0;i<this.callbacks.length;i++) { 
             this.callbacks[i].resetJoy(joystick);
           }
           joylabels.joyUnmapped(joystick);
         }
 
-        //Map and Update
-        this.joy_mapping[joystick-1] = gamepad;
+        //Update Dropdowns
         this.generateDropdowns(gamepads);
       },
 

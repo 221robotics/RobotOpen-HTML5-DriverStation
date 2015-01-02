@@ -231,6 +231,7 @@ define([
       bytearray[0] = 99;  // 'c'
 
       // load joystick data into byte array
+      console.log(instance.joy1);
       for (var i = 0; i < 24; i++) {
         bytearray[i+1] = instance.joy1[i];
       }
