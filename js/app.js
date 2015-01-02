@@ -168,6 +168,17 @@ define([
     // no joy enable
     $("#no-joy-en-btn").bind('click', rolink.setNoJoyEnable);
 
+    // bind joystick dropdowns to allocation updater
+    $(".joystick_setup").change(function(e) {
+      var value;
+      if(e.currentTarget.value == "null") {
+        value = null;
+      } else {
+        value = Number(e.currentTarget.value);
+      }
+      joystickHandler.updateAllocation(Number(e.currentTarget.name), value, gamepad.gamepads());
+    });
+
     // load in robot config
     chrome.storage.local.get(['robotPort', 'robotIp'], function(items) {
       if (items.robotPort !== undefined) {

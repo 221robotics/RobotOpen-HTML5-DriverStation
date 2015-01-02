@@ -190,8 +190,8 @@ define([
     // slightly older versions of Chrome, but it shouldn’t be necessary
     // for long.
     var rawGamepads =
-        (navigator.webkitGetGamepads && navigator.webkitGetGamepads()) ||
-        navigator.webkitGamepads;
+        (navigator.getGamepads && navigator.getGamepads()) ||
+        navigator.Gamepads;
 
     if (rawGamepads) {
       // We don’t want to use rawGamepads coming straight from the browser,
@@ -247,8 +247,13 @@ define([
 
   };
 
+  var getGamepads = function() {
+    return gamepads;
+  };
+
   // return the init call
   return {
-    init: init
+    init: init,
+    gamepads: getGamepads
   };
 });
