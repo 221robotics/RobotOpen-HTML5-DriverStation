@@ -170,6 +170,13 @@ define([
 
     // bind joystick dropdowns to allocation updater
     $(".joystick_setup").change(function(e) {
+      //Do not allow joystick re-assignment unless disabled
+      if (rolink.is_connected) {
+        if (rolink.enabled) {
+          rolink.disable();
+        }
+      }
+
       var value;
       if(e.currentTarget.value == "null") {
         value = null;
