@@ -25,7 +25,7 @@ define([
       else
         buttonIdentifier = "Button_"+this.model.get('gamepadIndex');
 
-      $(this.el).html('<td class="primary">' + this.model.get('alias') + '</td><td><a class="btn btn-primary btn-small">' + buttonIdentifier + '</a></td>');
+      $(this.el).html('<td class="primary">' + this.model.get('alias') + ': ' + this.model.get('arduino_alias') +'</td><td><a class="btn btn-primary btn-small">' + buttonIdentifier + '</a></td>');
       return this; // for chainable calls, like .render().el
     },
     // `unrender()`: Makes Model remove itself from the DOM.
