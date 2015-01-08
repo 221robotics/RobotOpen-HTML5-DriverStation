@@ -7,19 +7,20 @@ define([
       callbacks: [],
 
       // print debug statements to console
-      debugging: false,
+      debugging: true,
 
-      joy1_view: new ControllerView({localIdentifier: 'joy1'}),
-      joy2_view: new ControllerView({localIdentifier: 'joy2'}),
-      joy3_view: new ControllerView({localIdentifier: 'joy3'}),
-      joy4_view: new ControllerView({localIdentifier: 'joy4'}),
+      //Array to simplify, may break things
+      joy_views: [
+        new ControllerView({localIdentifier: 'joy1'}),
+        new ControllerView({localIdentifier: 'joy2'}),
+        new ControllerView({localIdentifier: 'joy3'}),
+        new ControllerView({localIdentifier: 'joy4'})
+      ],
 
-      joy1_mapped: false,
-      joy2_mapped: false,
-      joy3_mapped: false,
-      joy4_mapped: false,
-
-      unique_joy_mapping: {},
+      //null means unmapped, removes the additional 4 boolean variables. 
+      //Array organizes the mapping, since there will only ever be 4 joysticks. 
+      //This may break things as the keys are now the values and the values are the keys zero indexed. 
+      joy_mapping: [null,null,null,null],
 
       // keep track of components that change (lookup)
       componentCache: {},
@@ -36,6 +37,14 @@ define([
         if (this.debugging)
           console.log("[JoystickHandler] " + msg);
       },
+      
+      //Allows Objects and Arrays to be logged properly
+      raw_debug: function(msg) {
+        if(this.debugging) {
+          console.log("[JoystickHandler]");
+          console.log(msg);
+        }
+      },
 
       subscribe: function(callback) {
         this.callbacks.push(callback);
@@ -51,83 +60,47 @@ define([
 
         // keep track of all joysticks currently mapped so we know if anything has been removed
         var remainingJoys = [];
-        for (var key in this.unique_joy_mapping) {
-          remainingJoys.push(key);
+        for (var key in this.joy_mapping) {
+          remainingJoys.push(this.joy_mapping[key]);
         }
 
         for (var i=0; i<gamepads.length; i++) {
-          if (gamepads[i].index in this.unique_joy_mapping) {
+          if (this.joy_mapping.indexOf(gamepads[i].index) != -1) {
             // we've seen this gamepad before
             remainingJoys.splice(remainingJoys.indexOf(gamepads[i].index), 1);
           } else {
             // new gamepad!!
-            if (!this.joy1_mapped) {
-              this.joy1_mapped = true;
-              this.unique_joy_mapping[gamepads[i].index] = 1;
-              $("#joy1name").html(gamepads[i].id);
-              joylabels.joyMapped(1);
-            } else if (!this.joy2_mapped) {
-              this.joy2_mapped = true;
-              this.unique_joy_mapping[gamepads[i].index] = 2;
-              $("#joy2name").html(gamepads[i].id);
-              joylabels.joyMapped(2);
-            } else if (!this.joy3_mapped) {
-              this.joy3_mapped = true;
-              this.unique_joy_mapping[gamepads[i].index] = 3;
-              $("#joy3name").html(gamepads[i].id);
-              joylabels.joyMapped(3);
-            } else if (!this.joy4_mapped) {
-              this.joy4_mapped = true;
-              this.unique_joy_mapping[gamepads[i].index] = 4;
-              $("#joy4name").html(gamepads[i].id);
-              joylabels.joyMapped(4);
-            } // else we're all filled up, ignore for now
+            for(var j = 0; j < this.joy_mapping.length; j++) {
+              if(this.joy_mapping[j] == null) {
+                this.joy_mapping[j] = gamepads[i].index;
+                joylabels.joyMapped(j+1); //Array is zero index, external is one indexed
+                break; //Exit Loop after finding an open Joystick
+              }
+            } // all filled up, ignore for now
           }
         }
 
         // check to see if any joysticks have been removed
         for (var i=0; i<remainingJoys.length; i++) {
-          // anything in here has just been disconnected!
-          if (this.unique_joy_mapping[remainingJoys[i]] == 1 && this.joy1_mapped) {
-            // joystick 1 has been disconnected
-            this.joy1_mapped = false;
-            $("#joy1name").html('Not Mapped');
-            for (var i=0;i<this.callbacks.length;i++) { 
-              this.callbacks[i].resetJoy(1);
+          for(var j = 0; j < this.joy_mapping.length; j++) {
+            // anything in here has just been disconnected!
+            if (this.joy_mapping[j] == remainingJoys[i]) {
+              // joystick has been disconnected
+              this.joy_mapping[j] = null;
+              for (var k=0;k<this.callbacks.length;k++) { 
+                this.callbacks[k].resetJoy(j+1);
+              }
+              joylabels.joyUnmapped(j+1);
             }
-            joylabels.joyUnmapped(1);
-          } else if (this.unique_joy_mapping[remainingJoys[i]] == 2 && this.joy2_mapped) {
-            // joystick 2 has been disconnected
-            this.joy2_mapped = false;
-            $("#joy2name").html('Not Mapped');
-            for (var i=0;i<this.callbacks.length;i++) { 
-              this.callbacks[i].resetJoy(2);
-            }
-            joylabels.joyUnmapped(2);
-          } else if (this.unique_joy_mapping[remainingJoys[i]] == 3 && this.joy3_mapped) {
-            // joystick 3 has been disconnected
-            this.joy3_mapped = false;
-            $("#joy3name").html('Not Mapped');
-            for (var i=0;i<this.callbacks.length;i++) { 
-              this.callbacks[i].resetJoy(3);
-            }
-            joylabels.joyUnmapped(3);
-          } else if (this.unique_joy_mapping[remainingJoys[i]] == 4 && this.joy4_mapped) {
-            // joystick 4 has been disconnected
-            this.joy4_mapped = false;
-            $("#joy4name").html('Not Mapped');
-            for (var i=0;i<this.callbacks.length;i++) { 
-              this.callbacks[i].resetJoy(4);
-            }
-            joylabels.joyUnmapped(4);
           }
-        }
+        }//30 to 11
+
+        this.generateDropdowns(gamepads);
 
         // let our callbacks know how many joysticks are connected
         for (var i=0;i<this.callbacks.length;i++) { 
           this.callbacks[i].handleJoyCountChange(gamepads.length);
         }
-
       },
 
       /**
@@ -146,60 +119,71 @@ define([
         // check if this value has changed since the last update
         if (this.componentCache[key] != value) {
           // look up the mapping info and translate from gamepad IDs to robotlink indexes
-          if (chromeIndex in this.unique_joy_mapping) {
-            var mappedJoyIndex = this.unique_joy_mapping[chromeIndex];
+          if (this.joy_mapping.indexOf(chromeIndex) != -1) {
+            var mappedJoyIndex = this.joy_mapping.indexOf(chromeIndex);
 
-            if (mappedJoyIndex == 1) {
-              _(this.joy1_view.collection.models).each(function(item){
-                if (!axis || (value > 190 || value < 63))
-                  ref.joy1_view.buttonUpdate(axis, id);
-                if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
-                  // we have a match!
-                  for (var i=0;i<ref.callbacks.length;i++) {
-                    ref.callbacks[i].handleJoyData(1, item.get('bundleIndex'), value);
-                  }
+            _(this.joy_views[mappedJoyIndex].collection.models).each(function(item){
+              if (!axis || (value > 190 || value < 63))
+                ref.joy_views[mappedJoyIndex].buttonUpdate(axis, id);
+              if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
+                // we have a match!
+                for (var i=0;i<ref.callbacks.length;i++) {
+                  ref.callbacks[i].handleJoyData(mappedJoyIndex+1, item.get('bundleIndex'), value);
                 }
-              });
-            } else if (mappedJoyIndex == 2) {
-              _(this.joy2_view.collection.models).each(function(item){
-                if (!axis || (value > 190 || value < 63))
-                  ref.joy2_view.buttonUpdate(axis, id);
-                if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
-                  // we have a match!
-                  for (var i=0;i<ref.callbacks.length;i++) {
-                    ref.callbacks[i].handleJoyData(2, item.get('bundleIndex'), value);
-                  }
-                }
-              });
-            } else if (mappedJoyIndex == 3) {
-              _(this.joy3_view.collection.models).each(function(item){
-                if (!axis || (value > 190 || value < 63))
-                  ref.joy3_view.buttonUpdate(axis, id);
-                if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
-                  // we have a match!
-                  for (var i=0;i<ref.callbacks.length;i++) {
-                    ref.callbacks[i].handleJoyData(3, item.get('bundleIndex'), value);
-                  }
-                }
-              });
-            } else if (mappedJoyIndex == 4) {
-              _(this.joy4_view.collection.models).each(function(item){
-                if (!axis || (value > 190 || value < 63))
-                  ref.joy4_view.buttonUpdate(axis, id);
-                if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
-                  // we have a match!
-                  for (var i=0;i<ref.callbacks.length;i++) {
-                    ref.callbacks[i].handleJoyData(4, item.get('bundleIndex'), value);
-                  }
-                }
-              });
-            }
+              }
+            });//45 to 10
           }
 
           // the component did change, cache it
           this.componentCache[key] = value;
         }
 
+      },
+
+      updateAllocation: function(joystick, gamepad, gamepads) {
+        //Handle Allocated Gamepad
+        if(gamepad != null && this.joy_mapping.indexOf(gamepad) != -1) {
+          for (var i=0;i<this.callbacks.length;i++) { 
+            this.callbacks[i].resetJoy(this.joy_mapping.indexOf(gamepad)+1);
+          }
+          joylabels.joyUnmapped(this.joy_mapping.indexOf(gamepad)+1);
+          this.joy_mapping[this.joy_mapping.indexOf(gamepad)] = null;
+        }
+
+        //Cache and Map
+        var previous = this.joy_mapping[joystick-1];
+        this.joy_mapping[joystick-1] = gamepad;
+
+        //Connect previously disconnected
+        if(previous == null && this.joy_mapping[joystick-1] != null) {
+          joylabels.joyMapped(joystick);
+        }
+        //Disconnect previously connected
+        if(previous != null && this.joy_mapping[joystick-1] == null) {
+          for (var i=0;i<this.callbacks.length;i++) { 
+            this.callbacks[i].resetJoy(joystick);
+          }
+          joylabels.joyUnmapped(joystick);
+        }
+
+        //Update Dropdowns
+        this.generateDropdowns(gamepads);
+      },
+
+      generateDropdowns: function(gamepads) {
+        //Generate Gamepad Dropdowns
+        var html = ["","","",""]; //Empty Array Template
+        for(var i = 0; i < html.length; i++) { //Loop through 4 Joysticks
+          html[i]+= "<option  value=\"null\">Not Mapped</option>"; //Default
+          for(var j = 0; j < gamepads.length; j++) { //Loop through Each Attached Gamepad
+            //Add Each Attached Gamepad (Allocated or Not). Checking if it is the one currently allocated to the Joystick. 
+            html[i]+= "<option "+(
+              //Is the Joystick Allocated at all && Is the current Gamepad the one allocated (if so it "selects" that dropdown)
+              ((this.joy_mapping[i] == gamepads[j].index))
+            ? "selected=\"selected\"" : "")+" value=\""+gamepads[j].index+"\" >"+gamepads[j].id+"</option>"
+          }
+          $("#joystick_setup_"+(i+1)).html(html[i]);
+        }
       }
   };
 });

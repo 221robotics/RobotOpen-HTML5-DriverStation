@@ -247,8 +247,13 @@ define([
 
   };
 
+  var getGamepads = function() {
+    return gamepads;
+  };
+
   // return the init call
   return {
-    init: init
+    init: init,
+    gamepads: getGamepads
   };
 });
