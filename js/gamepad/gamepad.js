@@ -184,7 +184,6 @@ define([
   // connection/disconnection events, but requires you to monitor
   // an array for changes.
   var pollGamepads = function() {
-
     // Get the array of gamepads – the first method (function call)
     // is the most modern one, the second is there for compatibility with
     // slightly older versions of Chrome, but it shouldn’t be necessary
@@ -231,6 +230,14 @@ define([
       return 127;
   };
 
+  // joystick buttons are now objects in new versions of chrome
+  var normalizeButton = function(b) {
+    if (typeof(b) == "object") {
+      return b.value;
+    }
+    return b;
+  }
+
   // Call the handler with new state of this particular gamepad
   var updateGamepad = function(gamepadId) {
     var gamepad = gamepads[gamepadId];
@@ -242,7 +249,7 @@ define([
 
     // send button updates
     for (var i=0; i<gamepad.buttons.length; i++) {
-      joyHandler.updateComponent(Math.round(255*gamepad.buttons[i]), gamepad.index, false, i);
+      joyHandler.updateComponent(Math.round(255*normalizeButton(gamepad.buttons[i])), gamepad.index, false, i);
     }
 
   };
