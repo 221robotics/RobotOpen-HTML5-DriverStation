@@ -45,28 +45,28 @@ define([
    * Initialize support for Gamepad API.
    */
   var init = function(handler) {
-    joyHandler = handler
+    joyHandler = handler;
 
-    // As of writing, it seems impossible to detect Gamepad API support
-    // in Firefox, hence we need to hardcode it in the third clause.
-    // (The preceding two clauses are for Chrome.)
-    var gamepadSupportAvailable = !!navigator.webkitGetGamepads ||
-        !!navigator.webkitGamepads ||
-        (navigator.userAgent.indexOf('Firefox/') != -1);
+    var gamepadSupportAvailable = navigator.getGamepads ||
+        !!navigator.webkitGetGamepads ||
+        !!navigator.webkitGamepads;
 
     if (!gamepadSupportAvailable) {
       // It doesn’t seem Gamepad API is available – show a message telling
       // the visitor about it.
       joyHandler.notSupported();
     } else {
-      // Firefox supports the connect/disconnect event, so we attach event
-      // handlers to those.
-      window.addEventListener('MozGamepadConnected', onGamepadConnect, false);
-      window.addEventListener('MozGamepadDisconnected', onGamepadDisconnect, false);
-
-      // Since Chrome only supports polling, we initiate polling loop straight
-      // away. For Firefox, we will only do it if we get a connect event.
-      if (!!navigator.webkitGamepads || !!navigator.webkitGetGamepads) {
+      // Check and see if gamepadconnected/gamepaddisconnected is supported.
+      // If so, listen for those events and don't start polling until a gamepad
+      // has been connected.
+      if ('ongamepadconnected' in window) {
+        console.log('adding listeners');
+        window.addEventListener('gamepadconnected',
+                              onGamepadConnect, false);
+        window.addEventListener('gamepaddisconnected',
+                                onGamepadDisconnect, false);
+      } else {
+        // If connection events are not supported just start polling
         startPolling();
       }
     }
@@ -190,8 +190,8 @@ define([
     // slightly older versions of Chrome, but it shouldn’t be necessary
     // for long.
     var rawGamepads =
-        (navigator.webkitGetGamepads && navigator.webkitGetGamepads()) ||
-        navigator.webkitGamepads;
+        (navigator.getGamepads && navigator.getGamepads()) ||
+        (navigator.webkitGetGamepads && navigator.webkitGetGamepads());
 
     if (rawGamepads) {
       // We don’t want to use rawGamepads coming straight from the browser,
