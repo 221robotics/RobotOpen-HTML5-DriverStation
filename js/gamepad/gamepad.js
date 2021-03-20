@@ -200,7 +200,7 @@ define([
 
       // We only refresh the display when we detect some gamepads are new
       // or removed; we do it by comparing raw gamepad table entries to
-      // null or undefined.”
+      // "null" or "undefined.”
       var gamepadsChanged = false;
 
       for (var i = 0; i < rawGamepads.length; i++) {
