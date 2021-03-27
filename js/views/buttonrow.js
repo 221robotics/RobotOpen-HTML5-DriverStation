@@ -25,7 +25,17 @@ define([
       else
         buttonIdentifier = "Button_"+this.model.get('gamepadIndex');
 
-      $(this.el).html('<td class="primary">' + this.model.get('alias') + ': ' + this.model.get('arduino_alias') +'</td><td><a class="btn btn-primary btn-small">' + buttonIdentifier + '</a></td>');
+      var buttonValue;
+      var buttonPercent;
+      if (this.model.get('axis')) {
+        buttonValue = this.model.get('value');
+        buttonPercent = Math.trunc(buttonValue/255*100);
+      } else {
+        buttonValue = (this.model.get('value') > 0)? 1:this.model.get('value');
+        buttonPercent = Math.trunc(buttonValue/1*100);
+      }
+      
+      $(this.el).html('<td class="primary">' + this.model.get('alias') + ': ' + this.model.get('arduino_alias') +'</td><td><div class="progress"><div class="bar" style="width: ' + buttonPercent + '%;" aria-valuenow="' + this.model.get('value') + '" aria-valuemin="0" aria-valuemax="255">' + buttonValue + '</div></div></td><td><a class="btn btn-primary btn-small">' + buttonIdentifier + '</a></td>');
       return this; // for chainable calls, like .render().el
     },
     // `unrender()`: Makes Model remove itself from the DOM.
