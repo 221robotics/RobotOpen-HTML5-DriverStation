@@ -127,6 +127,7 @@ define([
                 ref.joy_views[mappedJoyIndex].buttonUpdate(axis, id);
               if (item.get('gamepadIndex') == id && item.get('axis') == axis) {
                 // we have a match!
+                item.set({value:value});
                 for (var i=0;i<ref.callbacks.length;i++) {
                   ref.callbacks[i].handleJoyData(mappedJoyIndex+1, item.get('bundleIndex'), value);
                 }
